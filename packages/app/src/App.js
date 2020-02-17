@@ -1,8 +1,12 @@
+/* eslint-disable import/extensions */
 import ServerApp from '@lskjs/server';
 import Telegraf from 'telegraf';
 import mapValues from 'lodash/mapValues';
 import forEach from 'lodash/forEach';
-import * as actionClasses from './actions';  //eslint-disable-line
+import * as actionClasses from './actions'; //eslint-disable-line
+
+// eslint-disable-next-line import/no-unresolved
+import './game';
 
 export default class App extends ServerApp {
   async init() {
