@@ -1,22 +1,19 @@
+/* eslint-disable import/no-unresolved */
 /* eslint-disable import/extensions */
 /* eslint-disable no-param-reassign */
 
 import find from 'lodash/find';
-// eslint-disable-next-line import/no-unresolved
-import { Player, PlayerProps } from './Player';
+import { Player } from './Player';
+import { User } from './GameRoom';
 
 const mockPlayers = [
   {
-    userId: '0',
+    userId: 0,
     name: 'p1',
   },
   {
-    userId: '1',
+    userId: 1,
     name: 'p2',
-  },
-  {
-    userId: '2',
-    name: 'p3',
   },
 ];
 
@@ -24,18 +21,18 @@ const persons = [
   {
     name: 'Печенька',
     attack: 'Синий',
-    defence: 'Персы',
+    defence: 'Синий',
   },
   {
     name: 'Синий',
-    attack: 'Персы',
+    attack: 'Печенька',
     defence: 'Печенька',
   },
-  {
-    name: 'Персы',
-    attack: 'Печенька',
-    defence: 'Синий',
-  },
+  // {
+  //   name: 'Персы',
+  //   attack: 'Печенька',
+  //   defence: 'Синий',
+  // },
 ];
 
 type TurnType = 'attack' | 'defence' | 'character';
@@ -46,23 +43,23 @@ interface Turn {
 }
 
 interface ActionData {
-  userId: string;
-  opponentId: string;
+  userId: number;
+  opponentId: number;
 }
 
 interface CharacterData {
-  userId: string;
+  userId: number;
   characterName: string;
 }
 
-class Game {
+export class Game {
   public round = 0;
 
   private players: Player[] = [];
   private events: Turn[] = [];
   public turns: Turn[] = [];
 
-  constructor({ players }: { players: PlayerProps[] }) {
+  constructor({ players }: { players: User[] }) {
     this.players = players.map(p => new Player(p));
     this.start();
   }
@@ -80,7 +77,7 @@ class Game {
     });
   }
 
-  public getUserCharacterName(userId: string): string | undefined {
+  public getUserCharacterName(userId: User['userId']): string | undefined {
     const player = find(this.players, { userId });
     return player && player.character.name;
   }
@@ -163,10 +160,10 @@ class Game {
 const game = new Game({ players: mockPlayers });
 
 console.log(game.getUserCharacterName('0'));
-game.attack({ userId: '0', opponentId: '1' });
-game.attack({ userId: '1', opponentId: '2' });
-game.attack({ userId: '2', opponentId: '1' });
-game.defence({ userId: '0', opponentId: '2' });
-game.defence({ userId: '1', opponentId: '2' });
-game.defence({ userId: '2', opponentId: '0' });
+game.attack({ userId: 0, opponentId: 1 });
+game.attack({ userId: 1, opponentId: 2 });
+// game.attack({ userId: 2, opponentId: 1 });
+game.defence({ userId: 0, opponentId: 2 });
+game.defence({ userId: 1, opponentId: 2 });
+// game.defence({ userId: 2, opponentId: 0 });
 console.log(game.turns);

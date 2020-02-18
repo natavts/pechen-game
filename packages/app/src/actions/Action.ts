@@ -1,7 +1,10 @@
 import { Telegram } from 'telegraf';
+// eslint-disable-next-line import/no-unresolved
+import { GameRoom } from 'game/GameRoom';
 
 export type ActionProps = {
   bot: Telegram;
+  gameRoom: GameRoom;
   [name: string]: any;
 };
 
@@ -16,10 +19,12 @@ export interface IAction {
 
 export default class Action implements IAction {
   public bot: Telegram;
+  public gameRoom: GameRoom;
   public name: string;
   constructor(props: ActionProps) {
-    const { bot } = props;
+    const { bot, gameRoom } = props;
     this.bot = bot;
+    this.gameRoom = gameRoom;
     this.name = 'Action';
   }
 

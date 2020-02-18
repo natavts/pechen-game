@@ -6,17 +6,20 @@ import forEach from 'lodash/forEach';
 import * as actionClasses from './actions'; //eslint-disable-line
 
 // eslint-disable-next-line import/no-unresolved
+import { GameRoom } from './game/GameRoom';
+// eslint-disable-next-line import/no-unresolved
 import './game';
 
 export default class App extends ServerApp {
   async init() {
     await super.init();
+    const gameRoom = new GameRoom(2);
     if (this.config.telegram) {
       this.bot = new Telegraf(this.config.telegram.token);
       this.bot.startPolling();
       this.actionClasses = actionClasses;
       this.actions = mapValues(this.actionClasses, ActionClass => {
-        return new ActionClass({ bot: this.bot });
+        return new ActionClass({ bot: this.bot, gameRoom });
       });
     }
   }

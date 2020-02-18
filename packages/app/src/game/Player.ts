@@ -1,7 +1,6 @@
-export interface PlayerProps {
-  userId: string;
-  name: string;
-}
+/* eslint-disable import/extensions */
+// eslint-disable-next-line import/no-unresolved
+import { User } from './GameRoom';
 
 export interface Character {
   name: string;
@@ -15,7 +14,7 @@ export class Player {
   public points = 0;
   private _character: Character;
 
-  constructor(player: PlayerProps) {
+  constructor(player: User) {
     Object.assign(this, player);
   }
 
