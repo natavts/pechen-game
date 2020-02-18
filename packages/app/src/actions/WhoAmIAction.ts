@@ -11,8 +11,7 @@ export class WhoAmIAction extends Action {
   }
 
   private menuButtons = Telegraf.Extra.markdown().markup(m => {
-    console.log({ m });
-    return m.keyboard(['Кто я?', 'Ходить', 'Статус']);
+    return m.keyboard(['👤 Кто я?', '⚔ Ходить', 'Статус']);
   });
 
   public test(message: IncomingMessage): boolean {

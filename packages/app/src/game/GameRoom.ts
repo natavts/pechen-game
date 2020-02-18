@@ -26,6 +26,10 @@ export class GameRoom {
     return this.count === this.players.length;
   }
 
+  public checkUserInGame(user: User): boolean {
+    return !this.players.some(player => player.userId === user.userId);;
+  }
+
   private startGame(): void {
     if (this.game) return;
     this.game = new Game({ players: this.players });

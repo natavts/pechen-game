@@ -11,8 +11,7 @@ export class JoinAction extends Action {
   }
 
   private menuButtons = Telegraf.Extra.markdown().markup(m => {
-    console.log({ m });
-    return m.keyboard(['Кто я?', 'Ходить', 'Статус']);
+    return m.keyboard(['👤 Кто я?', '⚔ Ходить', 'Статус']);
   });
 
   public test(message: IncomingMessage): boolean {
@@ -23,11 +22,16 @@ export class JoinAction extends Action {
   public exec(message: IncomingMessage): void {
     const chatId = message.from?.id;
     if (!chatId) return;
-    this.gameRoom.join({ userId: chatId, name: message.from.username });
+    if (this.gameRoom.checkUserInGame({ userId: chatId })) {
+      this.gameRoom.join({ userId: chatId, name: message.from.username });
+      this.bot.telegram.sendMessage(chatId, '⏱ Ждем остальных...'); // refresh
+    } else {
+      this.bot.telegram.sendMessage(chatId, 'Ты уже в игре, дэбил 🙅 ');
+    }
     if (this.gameRoom.isFull()) {
-      this.bot.telegram.sendMessage(chatId, 'Игра началась', this.menuButtons);
+      this.bot.telegram.sendMessage(chatId, '👾 Игра началась', this.menuButtons);
       return;
     }
-    this.bot.telegram.sendMessage(chatId, 'Ждем остальных'); // refresh
+    // this.bot.telegram.sendMessage(chatId, 'Ждем остальных'); // refresh
   }
 }
