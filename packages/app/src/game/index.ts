@@ -5,35 +5,36 @@
 import find from 'lodash/find';
 import { Player } from './Player';
 import { User } from './GameRoom';
+import { persons, mockPlayers } from '../mocks/mocks';
 
-const mockPlayers = [
-  {
-    userId: 0,
-    name: 'p1',
-  },
-  {
-    userId: 1,
-    name: 'p2',
-  },
-];
+// const mockPlayers = [
+//   {
+//     userId: 0,
+//     name: 'p1',
+//   },
+//   {
+//     userId: 1,
+//     name: 'p2',
+//   },
+// ];
 
-const persons = [
-  {
-    name: 'Печенька',
-    attack: 'Синий',
-    defence: 'Синий',
-  },
-  {
-    name: 'Синий',
-    attack: 'Печенька',
-    defence: 'Печенька',
-  },
-  // {
-  //   name: 'Персы',
-  //   attack: 'Печенька',
-  //   defence: 'Синий',
-  // },
-];
+// const persons = [
+//   {
+//     name: 'Печенька',
+//     attack: 'Синий',
+//     defence: 'Синий',
+//   },
+//   {
+//     name: 'Синий',
+//     attack: 'Печенька',
+//     defence: 'Печенька',
+//   },
+//   // {
+//   //   name: 'Персы',
+//   //   attack: 'Печенька',
+//   //   defence: 'Синий',
+//   // },
+// ];
 
 type TurnType = 'attack' | 'defence' | 'character';
 
