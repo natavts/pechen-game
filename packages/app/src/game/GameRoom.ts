@@ -1,6 +1,7 @@
 /* eslint-disable import/no-unresolved */
 /* eslint-disable import/extensions */
 import { Game } from './index';
+import join from 'lodash/join';
 
 export interface User {
   userId: number;
@@ -24,6 +25,15 @@ export class GameRoom {
 
   public isFull(): boolean {
     return this.count === this.players.length;
+  }
+
+  public getUsers(userId: User['userId']): User[] {
+    return this.players.filter((user) => userId !== user.userId);
+  }
+
+  public getUsersList(userId: User['userId']): User[] {
+    const usersList = this.getUsers(userId).map((player, i) => `${i+1}. @${player.name}`);
+    return join(usersList, '\n');
   }
 
   public checkUserInGame(user: User): boolean {
