@@ -20,9 +20,9 @@ export class WhoAmIAction extends Action {
   }
 
   public exec(message: IncomingMessage): void {
-    const chatId = message.from?.id;
-    if (!chatId) return;
-    const characterName = this.gameRoom.game.getUserCharacterName(chatId);
-    this.bot.telegram.sendMessage(chatId, characterName, this.menuButtons); // refresh
+    const userId = message.from?.id;
+    if (!userId) return;
+    const characterName = this.gameRoom.game.getUserCharacterName(userId);
+    this.bot.telegram.sendMessage(userId, characterName, this.menuButtons); // refresh
   }
 }

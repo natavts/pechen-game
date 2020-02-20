@@ -20,8 +20,8 @@ export class StartGameAction extends Action {
   }
 
   public exec(message: IncomingMessage): void {
-    const chatId = message.from?.id;
-    if (!chatId) return;
-    this.bot.telegram.sendMessage(chatId, 'вапщвша', this.joinButtons);
+    const userId = message.from?.id;
+    if (!userId) return;
+    this.bot.telegram.sendMessage(userId, 'вапщвша', this.joinButtons);
   }
 }
