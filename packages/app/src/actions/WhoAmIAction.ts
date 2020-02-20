@@ -22,7 +22,7 @@ export class WhoAmIAction extends Action {
   public exec(message: IncomingMessage): void {
     const userId = message.from?.id;
     if (!userId) return;
-    const characterName = this.gameRoom.game.getUserCharacterName(userId);
+    const characterName = this.gameRoom.game.getPlayer(userId)?.characterName;
     this.bot.telegram.sendMessage(userId, characterName, this.menuButtons); // refresh
   }
 }
