@@ -11,7 +11,7 @@ export class ActionsAction extends Action {
   }
 
   private actionsButtons = Telegraf.Extra.markdown().markup(m => {
-    return m.keyboard(['🗡 Атаковать', '🛡 Защищаться', '⬅ Назад']);
+    return m.keyboard(['🗡 Атаковать', '🛡 Защищаться', '📝 Инфо...', '⬅ Назад']);
   });
 
   public test(message: IncomingMessage): boolean {
