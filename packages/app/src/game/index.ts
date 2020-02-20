@@ -3,6 +3,7 @@
 /* eslint-disable no-param-reassign */
 
 import find from 'lodash/find';
+import join from 'lodash/join';
 import { Player } from './Player';
 import { User } from './GameRoom';
 import { persons, mockPlayers } from '../mocks/mocks';
@@ -80,6 +81,11 @@ export class Game {
 
   public getPlayer(userId: User['userId']): Player | undefined {
     return find(this.players, { userId });
+  }
+
+  public getCharactersList(userId: User['userId']): Player[] {
+    const characterNames = persons.map(person => person.name);
+    return join(characterNames.filter((person) => this.getPlayer(userId)?.characterName !== person), '\n');
   }
 
   // public getUserCharacterName(userId: User['userId']): string | undefined {
