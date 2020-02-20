@@ -29,5 +29,4 @@ export class Player {
   public get characterName(): string {
     return this.character.name;
   }
-
 }

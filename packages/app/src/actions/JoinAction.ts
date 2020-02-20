@@ -30,7 +30,6 @@ export class JoinAction extends Action {
     }
     if (this.gameRoom.isFull()) {
       this.bot.telegram.sendMessage(userId, '👾 Игра началась!', this.menuButtons);
-      return;
     }
     // this.bot.telegram.sendMessage(userId, 'Ждем остальных'); // refresh
   }

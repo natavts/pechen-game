@@ -1,7 +1,7 @@
 /* eslint-disable import/no-unresolved */
 /* eslint-disable import/extensions */
-import { Game } from './index';
 import join from 'lodash/join';
+import { Game } from './index';
 
 export interface User {
   userId: number;
@@ -28,11 +28,11 @@ export class GameRoom {
   }
 
   public getUsers(userId: User['userId']): User[] {
-    return this.players.filter((user) => userId !== user.userId);
+    return this.players.filter(user => userId !== user.userId);
   }
 
-  public getUsersList(userId: User['userId']): User[] {
-    const usersList = this.getUsers(userId).map((player, i) => `${i+1}. @${player.name}`);
+  public getUsersList(userId: User['userId']): string {
+    const usersList = this.getUsers(userId).map((player, i) => `${i + 1}. @${player.name}`);
     return join(usersList, '\n');
   }
 

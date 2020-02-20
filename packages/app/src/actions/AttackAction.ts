@@ -23,8 +23,12 @@ export class AttackAction extends Action {
     const userId = message.from?.id;
     if (!userId) return;
     const buttons = this.gameRoom.getUsers(userId);
-    this.bot.telegram.sendMessage(userId, '🗡 Кого атакуем?',  Telegraf.Extra.markdown().markup(m => {
-      return m.keyboard(buttons);
-    })); // refresh
+    this.bot.telegram.sendMessage(
+      userId,
+      '🗡 Кого атакуем?',
+      Telegraf.Extra.markdown().markup(m => {
+        return m.keyboard(buttons);
+      }),
+    ); // refresh
   }
 }

@@ -6,38 +6,16 @@ import find from 'lodash/find';
 import join from 'lodash/join';
 import { Player } from './Player';
 import { User } from './GameRoom';
-import { persons, mockPlayers } from '../mocks/mocks';
+import {
+  persons,
+  // mockPlayers
+} from '../mocks/mocks';
 
-// const mockPlayers = [
-//   {
-//     userId: 0,
-//     name: 'p1',
-//   },
-//   {
-//     userId: 1,
-//     name: 'p2',
-//   },
-// ];
-
-// const persons = [
-//   {
-//     name: 'Печенька',
-//     attack: 'Синий',
-//     defence: 'Синий',
-//   },
-//   {
-//     name: 'Синий',
-//     attack: 'Печенька',
-//     defence: 'Печенька',
-//   },
-//   // {
-//   //   name: 'Персы',
-//   //   attack: 'Печенька',
-//   //   defence: 'Синий',
-//   // },
-// ];
-
-type TurnType = 'attack' | 'defence' | 'character';
+enum TurnType {
+  attack = 'attack',
+  defence = 'defence',
+  character = 'character',
+}
 
 interface Turn {
   type: TurnType;
@@ -83,14 +61,13 @@ export class Game {
     return find(this.players, { userId });
   }
 
-  public getCharactersList(userId: User['userId']): Player[] {
+  public getCharactersList(userId: User['userId']): string {
     const characterNames = persons.map(person => person.name);
-    return join(characterNames.filter((person) => this.getPlayer(userId)?.characterName !== person), '\n');
+    return join(
+      characterNames.filter(person => this.getPlayer(userId)?.characterName !== person),
+      '\n',
+    );
   }
-
-  // public getUserCharacterName(userId: User['userId']): string | undefined {
-  //   return this.getPlayer(userId) && this.getPlayer(userId).characterName;
-  // }
 
   public checkTurnEnd(): void {
     if (this.isTurnEnd()) {
@@ -109,9 +86,9 @@ export class Game {
     this.players.forEach(player => {
       const { userId, character } = player;
 
-      const attack = find(this.events, { data: { userId }, type: 'attack' }) as Turn;
-      const defence = find(this.events, { data: { userId }, type: 'defence' }) as Turn;
-      
+      const attack = find(this.events, { data: { userId }, type: TurnType.attack }) as Turn;
+      const defence = find(this.events, { data: { userId }, type: TurnType.defence }) as Turn;
+
       const victimPlayer = this.getPlayer((attack.data as ActionData).opponentId)?.characterName;
       const attackingPlayer = this.getPlayer((defence.data as ActionData).opponentId)?.characterName;
 
@@ -125,42 +102,30 @@ export class Game {
     });
   }
 
-  public makeTurn(turn: Turn):void {
+  public makeTurn(turn: Turn): void {
     this.turns.push(turn);
     this.checkTurnEnd();
   }
 
-  public attack({ userId, opponentId }: ActionData): void {
-    const turn = {
-      type: 'attack',
-      data: {
-        userId,
-        opponentId,
-      },
-    };
-    this.makeTurn(turn);
+  public attack(data: ActionData): void {
+    this.makeTurn({
+      type: TurnType.attack,
+      data,
+    });
   }
 
-  public defence({ userId, opponentId }: ActionData): void {
-    const turn = {
-      type: 'defence',
-      data: {
-        userId,
-        opponentId,
-      },
-    };
-    this.makeTurn(turn);
+  public defence(data: ActionData): void {
+    this.makeTurn({
+      type: TurnType.defence,
+      data,
+    });
   }
 
-  public character({ userId, characterName }: CharacterData): void {
-    const turn = {
-      type: 'character',
-      data: {
-        userId,
-        characterName,
-      },
-    };
-    this.makeTurn(turn);
+  public character(data: CharacterData): void {
+    this.makeTurn({
+      type: TurnType.defence,
+      data,
+    });
   }
 
   private isTurnEnd(): boolean {
@@ -175,13 +140,13 @@ export class Game {
   }
 }
 
-const game = new Game({ players: mockPlayers });
+// const game = new Game({ players: mockPlayers });
 
-console.log(game.getPlayer('0')?.characterName);
-game.attack({ userId: 0, opponentId: 1 });
-game.attack({ userId: 1, opponentId: 2 });
-// game.attack({ userId: 2, opponentId: 1 });
-game.defence({ userId: 0, opponentId: 2 });
-game.defence({ userId: 1, opponentId: 2 });
-// game.defence({ userId: 2, opponentId: 0 });
-console.log(game.turns);
+// console.log(game.getPlayer(0)?.characterName);
+// game.attack({ userId: 0, opponentId: 1 });
+// game.attack({ userId: 1, opponentId: 2 });
+// // game.attack({ userId: 2, opponentId: 1 });
+// game.defence({ userId: 0, opponentId: 2 });
+// game.defence({ userId: 1, opponentId: 2 });
+// // game.defence({ userId: 2, opponentId: 0 });
+// console.log(game.turns);
