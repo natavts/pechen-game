@@ -25,4 +25,9 @@ export class Player {
   public set character(character) {
     this._character = character;
   }
+
+  public get characterName(): string {
+    return this.character.name;
+  }
+
 }
