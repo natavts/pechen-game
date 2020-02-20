@@ -16,7 +16,7 @@ export class StartGameAction extends Action {
 
   public test(message: IncomingMessage): boolean {
     if (!message.text) return false;
-    return message.text.match(/start/) != null;
+    return message.text.match(/start|Start/) != null;
   }
 
   public exec(message: IncomingMessage): void {

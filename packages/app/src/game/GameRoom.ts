@@ -27,7 +27,7 @@ export class GameRoom {
   }
 
   public checkUserInGame(user: User): boolean {
-    return !this.players.some(player => player.userId === user.userId);;
+    return !this.players.some(player => player.userId === user.userId);
   }
 
   private startGame(): void {
