@@ -77,10 +77,13 @@ export class Game {
     });
   }
 
-  public getUserCharacterName(userId: User['userId']): string | undefined {
-    const player = find(this.players, { userId });
-    return player && player.character.name;
+  public getPlayer(userId: User['userId']): Player | undefined {
+    return find(this.players, { userId });
   }
+
+  // public getUserCharacterName(userId: User['userId']): string | undefined {
+  //   return this.getPlayer(userId) && this.getPlayer(userId).characterName;
+  // }
 
   public checkTurnEnd(): void {
     if (this.isTurnEnd()) {
@@ -101,12 +104,15 @@ export class Game {
 
       const attack = find(this.events, { data: { userId }, type: 'attack' }) as Turn;
       const defence = find(this.events, { data: { userId }, type: 'defence' }) as Turn;
+      
+      const victimPlayer = this.getPlayer((attack.data as ActionData).opponentId)?.characterName;
+      const attackingPlayer = this.getPlayer((defence.data as ActionData).opponentId)?.characterName;
 
-      if (this.getUserCharacterName((attack.data as ActionData).opponentId) === character.attack) {
+      if (victimPlayer === character.attack) {
         player.points += 2;
       }
 
-      if (this.getUserCharacterName((defence.data as ActionData).opponentId) === character.defence) {
+      if (attackingPlayer === character.defence) {
         player.points += 1;
       }
     });
@@ -164,7 +170,7 @@ export class Game {
 
 const game = new Game({ players: mockPlayers });
 
-console.log(game.getUserCharacterName('0'));
+console.log(game.getPlayer('0')?.characterName);
 game.attack({ userId: 0, opponentId: 1 });
 game.attack({ userId: 1, opponentId: 2 });
 // game.attack({ userId: 2, opponentId: 1 });
