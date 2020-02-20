@@ -112,37 +112,42 @@ export class Game {
     });
   }
 
+  public makeTurn(turn: Turn):void {
+    this.turns.push(turn);
+    this.checkTurnEnd();
+  }
+
   public attack({ userId, opponentId }: ActionData): void {
-    this.turns.push({
+    const turn = {
       type: 'attack',
       data: {
         userId,
         opponentId,
       },
-    });
-    this.checkTurnEnd();
+    };
+    this.makeTurn(turn);
   }
 
   public defence({ userId, opponentId }: ActionData): void {
-    this.turns.push({
+    const turn = {
       type: 'defence',
       data: {
         userId,
         opponentId,
       },
-    });
-    this.checkTurnEnd();
+    };
+    this.makeTurn(turn);
   }
 
   public character({ userId, characterName }: CharacterData): void {
-    this.turns.push({
+    const turn = {
       type: 'character',
       data: {
         userId,
         characterName,
       },
-    });
-    this.checkTurnEnd();
+    };
+    this.makeTurn(turn);
   }
 
   private isTurnEnd(): boolean {
