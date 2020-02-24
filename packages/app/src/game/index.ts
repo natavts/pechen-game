@@ -57,9 +57,9 @@ export class Game {
     });
   }
 
-  // public getPlayer(userId: User['userId']): Player | undefined {
-  //   return find(this.players, { userId });
-  // }
+  public getPlayer(userId: User['userId']): Player | undefined {
+    return find(this.players, { userId });
+  }
 
   public getCharactersList(): string {
     const characterNames = persons.map(person => person.name);
@@ -123,7 +123,7 @@ export class Game {
 
   public character(data: CharacterData): void {
     this.makeTurn({
-      type: TurnType.defence,
+      type: TurnType.character,
       data,
     });
   }
