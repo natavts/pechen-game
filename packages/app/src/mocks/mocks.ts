@@ -16,6 +16,8 @@ export const persons = [
   // },
 ];
 
+export const persons2 = ['Печенька', 'Синий', 'Стронций', '37', 'Персы', 'Косинус'];
+
 export const mockPlayers = [
   {
     userId: 0,
