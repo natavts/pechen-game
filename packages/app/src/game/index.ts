@@ -62,7 +62,7 @@ export class Game {
   }
 
   public getCharactersList(): string {
-    const characterNames = persons.map(person => person.name);
+    const characterNames = this.players.map(player => player?.characterName);
     return join(
       characterNames,
       '\n',
