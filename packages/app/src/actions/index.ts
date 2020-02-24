@@ -8,4 +8,6 @@ export { UsersListAction } from './UsersListAction'; // eslint-disable-line
 export { CharactersListAction } from './CharactersListAction'; // eslint-disable-line
 export { AttackAction } from './AttackAction'; // eslint-disable-line
 export { DefenceAction } from './DefenceAction'; // eslint-disable-line
+export { ExecutionAttackAction } from './ExecutionAttackAction'; // eslint-disable-line
+export { ExecutionDefenceAction } from './ExecutionDefenceAction'; // eslint-disable-line
 // export { StatusAction } from './StatusAction'; // eslint-disable-line

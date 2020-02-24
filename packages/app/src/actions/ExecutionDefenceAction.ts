@@ -4,10 +4,10 @@ import { IncomingMessage } from 'telegraf/typings/telegram-types'; // eslint-dis
 
 import Action, { ActionProps } from './Action'; // eslint-disable-line
 
-export class ActionsAction extends Action {
+export class ExecutionDefenceAction extends Action {
   constructor(props: ActionProps) {
     super(props);
-    this.name = 'ActionsAction';
+    this.name = 'ExecutionDefenceAction';
   }
 
   private actionsButtons = Telegraf.Extra.markdown().markup(m => {
@@ -16,12 +16,18 @@ export class ActionsAction extends Action {
 
   public test(message: IncomingMessage): boolean {
     if (!message.text) return false;
-    return message.text.match(/Ходить/) != null;
+    return message.text.match(/🛡 /) != null;
   }
 
   public exec(message: IncomingMessage): void {
     const userId = message.from?.id;
     if (!userId) return;
-    this.bot.telegram.sendMessage(userId, 'Выберите действие', this.actionsButtons); // refresh
+    const opponentName = message.text.replace('🛡 ', '');
+    this.gameRoom.game.defence(userId, this.gameRoom.getUserId(opponentName));
+    this.bot.telegram.sendMessage(
+      userId,
+      `Защищаюсь от @${opponentName}!!!!`,
+      this.actionsButtons,
+    ); // refresh
   }
 }

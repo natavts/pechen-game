@@ -22,10 +22,10 @@ export class AttackAction extends Action {
   public exec(message: IncomingMessage): void {
     const userId = message.from?.id;
     if (!userId) return;
-    const buttons = this.gameRoom.getUsers();
+    const buttons = this.gameRoom.getUsers().map((user) => `🗡 ${user}`);
     this.bot.telegram.sendMessage(
       userId,
-      '🗡 Кого атакуем?',
+      '💣 Кого атакуем?',
       Telegraf.Extra.markdown().markup(m => {
         return m.keyboard(buttons);
       }),
