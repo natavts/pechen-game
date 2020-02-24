@@ -57,14 +57,14 @@ export class Game {
     });
   }
 
-  public getPlayer(userId: User['userId']): Player | undefined {
-    return find(this.players, { userId });
-  }
+  // public getPlayer(userId: User['userId']): Player | undefined {
+  //   return find(this.players, { userId });
+  // }
 
-  public getCharactersList(userId: User['userId']): string {
+  public getCharactersList(): string {
     const characterNames = persons.map(person => person.name);
     return join(
-      characterNames.filter(person => this.getPlayer(userId)?.characterName !== person),
+      characterNames,
       '\n',
     );
   }

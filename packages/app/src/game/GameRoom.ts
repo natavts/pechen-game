@@ -27,12 +27,12 @@ export class GameRoom {
     return this.count === this.players.length;
   }
 
-  public getUsers(userId: User['userId']): User[] {
-    return this.players.filter(user => userId !== user.userId);
+  public getUsers(): User[] {
+    return this.players.map(user => user.name);
   }
 
-  public getUsersList(userId: User['userId']): string {
-    const usersList = this.getUsers(userId).map((player, i) => `${i + 1}. @${player.name}`);
+  public getUsersList(): string {
+    const usersList = this.players.map((player, i) => `${i + 1}. @${player.name}`);
     return join(usersList, '\n');
   }
 

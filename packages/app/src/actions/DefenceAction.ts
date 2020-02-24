@@ -22,7 +22,7 @@ export class DefenceAction extends Action {
   public exec(message: IncomingMessage): void {
     const userId = message.from?.id;
     if (!userId) return;
-    const buttons = this.gameRoom.getUsers(userId);
+    const buttons = this.gameRoom.getUsers();
     this.bot.telegram.sendMessage(userId, '🛡 От кого защищаемся?',  Telegraf.Extra.markdown().markup(m => {
       return m.keyboard(buttons);
     })); // refresh

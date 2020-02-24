@@ -22,7 +22,7 @@ export class AttackAction extends Action {
   public exec(message: IncomingMessage): void {
     const userId = message.from?.id;
     if (!userId) return;
-    const buttons = this.gameRoom.getUsers(userId);
+    const buttons = this.gameRoom.getUsers();
     this.bot.telegram.sendMessage(
       userId,
       '🗡 Кого атакуем?',

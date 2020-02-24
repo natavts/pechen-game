@@ -22,7 +22,7 @@ export class UsersListAction extends Action {
   public exec(message: IncomingMessage): void {
     const userId = message.from?.id;
     if (!userId) return;
-    const usersList = this.gameRoom.getUsersList(userId);
+    const usersList = this.gameRoom.getUsersList();
     this.bot.telegram.sendMessage(userId, `🎲 Список игроков:\n\n${usersList}`, this.actionsButtons); // refresh
   }
 }
