@@ -9,7 +9,7 @@ export interface Character {
 }
 
 export class Player {
-  public userId = 'defaultId';
+  public userId = 0;
   public name = 'defaultName';
   public points = 0;
   private _character: Character;

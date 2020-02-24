@@ -21,13 +21,13 @@ export class ExecutionDefenceAction extends Action {
 
   public exec(message: IncomingMessage): void {
     const userId = message.from?.id;
-    if (!userId) return;
+    if (!userId || !message.text) return;
     const opponentName = message.text.replace('🛡 ', '');
-    this.gameRoom.game.defence(userId, this.gameRoom.getUserId(opponentName));
-    this.bot.telegram.sendMessage(
-      userId,
-      `Защищаюсь от @${opponentName}!!!!`,
-      this.actionsButtons,
-    ); // refresh
+    const opponentId = this.gameRoom.getUserId(opponentName);
+    if (opponentId) {
+      this.gameRoom.game.defence({ userId, opponentId });
+      this.bot.telegram.sendMessage(userId, `Защищаюсь от @${opponentName}!!!!`, this.actionsButtons); // refresh
+    }
+    this.bot.telegram.sendMessage(userId, 'нахой'); // refresh
   }
 }

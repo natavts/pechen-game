@@ -21,8 +21,9 @@ export class JoinAction extends Action {
 
   public exec(message: IncomingMessage): void {
     const userId = message.from?.id;
-    if (!userId) return;
-    if (this.gameRoom.checkUserInGame({ userId })) {
+    if (!userId || !message.from) return;
+    if (this.gameRoom.checkUserInGame(userId)) {
+      // TODO: придумать что делать с чуваками без юзернейма
       this.gameRoom.join({ userId, name: message.from.username });
       this.bot.telegram.sendMessage(userId, '⏱ Ждем остальных...'); // refresh
     } else {

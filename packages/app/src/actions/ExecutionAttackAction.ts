@@ -21,13 +21,14 @@ export class ExecutionAttackAction extends Action {
 
   public exec(message: IncomingMessage): void {
     const userId = message.from?.id;
-    if (!userId) return;
+    if (!userId || !message.text) return;
     const opponentName = message.text.replace('🗡 ', '');
-    this.gameRoom.game.attack(userId, this.gameRoom.getUserId(opponentName));
-    this.bot.telegram.sendMessage(
-      userId,
-      `АТАКУЮ @${opponentName}!!!!`,
-      this.actionsButtons,
-    ); // refresh
+    const opponentId = this.gameRoom.getUserId(opponentName);
+    if (opponentId) {
+      this.gameRoom.game.attack({ userId, opponentId });
+      this.bot.telegram.sendMessage(userId, `АТАКУЮ @${opponentName}!!!!`, this.actionsButtons); // refresh
+      return;
+    }
+    this.bot.telegram.sendMessage(userId, 'Нет такого игрока');
   }
 }

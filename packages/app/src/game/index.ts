@@ -8,7 +8,6 @@ import { Player, Character } from './Player';
 import { User } from './GameRoom';
 import {
   persons,
-  persons2,
   // mockPlayers
 } from '../mocks/mocks';
 
@@ -61,12 +60,12 @@ export class Game {
   }
 
   public initRules(count: number): void {
-    const characters = persons2.slice(0, count);
+    const characters = persons.slice(0, count);
     this.rules = characters.map((person, i) => ({
       name: characters[i],
       attack: characters[i + 1] || characters[0],
       defence: characters[i - 1] || characters[characters.length - 1],
-    }))
+    }));
   }
 
   public getPlayer(userId: User['userId']): Player | undefined {
@@ -75,10 +74,7 @@ export class Game {
 
   public getCharactersList(): string {
     const characterNames = this.players.map(player => player?.characterName);
-    return join(
-      characterNames,
-      '\n',
-    );
+    return join(characterNames, '\n');
   }
 
   public checkTurnEnd(): void {

@@ -28,13 +28,13 @@ export class GameRoom {
     return this.count === this.players.length;
   }
 
-  public getUsers(): User[] {
+  public getUsers(): string[] {
     return this.players.map(user => user.name);
   }
 
-  public getUserId(name: User['name']): User['userId'] {
+  public getUserId(name: User['name']): User['userId'] | undefined {
     const user = find(this.players, { name });
-    return user.userId;
+    return user && user.userId;
   }
 
   public getUsersList(): string {
@@ -42,8 +42,8 @@ export class GameRoom {
     return join(usersList, '\n');
   }
 
-  public checkUserInGame(user: User): boolean {
-    return !this.players.some(player => player.userId === user.userId);
+  public checkUserInGame(userId: User['userId']): boolean {
+    return !this.players.some(player => player.userId === userId);
   }
 
   private startGame(): void {
