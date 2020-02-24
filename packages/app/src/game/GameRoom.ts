@@ -32,8 +32,7 @@ export class GameRoom {
     return this.players.map(user => user.name);
   }
 
-  public getUserId(name: User['name']): User[] {
-    // return this.players.filter((user) => user.name === nickname);
+  public getUserId(name: User['name']): User['userId'] {
     const user = find(this.players, { name });
     return user.userId;
   }
