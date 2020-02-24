@@ -1,6 +1,7 @@
 /* eslint-disable import/no-unresolved */
 /* eslint-disable import/extensions */
 import join from 'lodash/join';
+import find from 'lodash/find';
 import { Game } from './index';
 
 export interface User {
@@ -29,6 +30,12 @@ export class GameRoom {
 
   public getUsers(): User[] {
     return this.players.map(user => user.name);
+  }
+
+  public getUserId(name: User['name']): User[] {
+    // return this.players.filter((user) => user.name === nickname);
+    const user = find(this.players, { name });
+    return user.userId;
   }
 
   public getUsersList(): string {
