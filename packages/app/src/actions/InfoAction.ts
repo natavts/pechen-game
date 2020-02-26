@@ -1,3 +1,5 @@
+/* eslint-disable import/no-unresolved */
+/* eslint-disable import/extensions */
 /* eslint-disable @typescript-eslint/camelcase */
 import { IncomingMessage } from 'telegraf/typings/telegram-types'; // eslint-disable-line
 

@@ -1,18 +1,16 @@
+/* eslint-disable import/no-unresolved */
+/* eslint-disable import/extensions */
 /* eslint-disable @typescript-eslint/camelcase */
-import Telegraf from 'telegraf';
 import { IncomingMessage } from 'telegraf/typings/telegram-types'; // eslint-disable-line
 
 import Action, { ActionProps } from './Action'; // eslint-disable-line
+import { menuButtons } from '../buttons/buttons';
 
 export class JoinAction extends Action {
   constructor(props: ActionProps) {
     super(props);
     this.name = 'JoinAction';
   }
-
-  private menuButtons = Telegraf.Extra.markdown().markup(m => {
-    return m.keyboard(['👤 Кто я?', '⚔ Ходить', 'Статус']);
-  });
 
   public test(message: IncomingMessage): boolean {
     if (!message.text) return false;
@@ -30,7 +28,7 @@ export class JoinAction extends Action {
       this.bot.telegram.sendMessage(userId, 'Ты уже в игре, дэбил 🙅 ');
     }
     if (this.gameRoom.isFull()) {
-      this.bot.telegram.sendMessage(userId, '👾 Игра началась!', this.menuButtons);
+      this.bot.telegram.sendMessage(userId, '👾 Игра началась!', menuButtons);
     }
     // this.bot.telegram.sendMessage(userId, 'Ждем остальных'); // refresh
   }

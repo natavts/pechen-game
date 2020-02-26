@@ -36,7 +36,7 @@ export class Game {
   public round = 0;
 
   private players: Player[] = [];
-  private events: Turn[] = [];
+  public events: Turn[] = [];
   public turns: Turn[] = [];
   public rules: Character[] = [];
 
