@@ -10,4 +10,7 @@ export { AttackAction } from './AttackAction'; // eslint-disable-line
 export { DefenceAction } from './DefenceAction'; // eslint-disable-line
 export { ExecutionAttackAction } from './ExecutionAttackAction'; // eslint-disable-line
 export { ExecutionDefenceAction } from './ExecutionDefenceAction'; // eslint-disable-line
+export { RulesAction } from './RulesAction'; // eslint-disable-line
+export { IAmNotAction } from './IAmNotAction'; // eslint-disable-line
+export { ExecutionIAmNotAction } from './ExecutionIAmNotAction'; // eslint-disable-line
 // export { StatusAction } from './StatusAction'; // eslint-disable-line

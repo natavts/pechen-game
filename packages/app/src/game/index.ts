@@ -3,7 +3,7 @@
 /* eslint-disable no-param-reassign */
 
 import find from 'lodash/find';
-import join from 'lodash/join';
+// import join from 'lodash/join';
 import { Player, Character } from './Player';
 import { User } from './GameRoom';
 import {
@@ -73,8 +73,7 @@ export class Game {
   }
 
   public getCharactersList(): string {
-    const characterNames = this.players.map(player => player?.characterName);
-    return join(characterNames, '\n');
+    return this.players.map(player => player?.character.name);
   }
 
   public checkTurnEnd(): void {
