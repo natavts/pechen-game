@@ -10,10 +10,6 @@ export class AttackAction extends Action {
     this.name = 'AttackAction';
   }
 
-  // private actionsButtons = Telegraf.Extra.markdown().markup(m => {
-  //   return m.keyboard(this.gameRoom.players.map(player => player.name));
-  // });
-
   public test(message: IncomingMessage): boolean {
     if (!message.text) return false;
     return message.text.match(/Атаковать/) != null;
@@ -22,7 +18,7 @@ export class AttackAction extends Action {
   public exec(message: IncomingMessage): void {
     const userId = message.from?.id;
     if (!userId) return;
-    const buttons = this.gameRoom.getUsers().map((user) => `🗡 ${user}`);
+    const buttons = this.gameRoom.getUsers().map(user => `🗡 ${user}`);
     this.bot.telegram.sendMessage(
       userId,
       '💣 Кого атакуем?',

@@ -10,10 +10,6 @@ export class DefenceAction extends Action {
     this.name = 'DefenceAction';
   }
 
-  // private actionsButtons = Telegraf.Extra.markdown().markup(m => {
-  //   return m.keyboard(this.gameRoom.players.map(player => player.name));
-  // });
-
   public test(message: IncomingMessage): boolean {
     if (!message.text) return false;
     return message.text.match(/Защищаться/) != null;

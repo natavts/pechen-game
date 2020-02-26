@@ -1,18 +1,14 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import Telegraf from 'telegraf';
 import { IncomingMessage } from 'telegraf/typings/telegram-types'; // eslint-disable-line
 
 import Action, { ActionProps } from './Action'; // eslint-disable-line
+import { infoButtons } from '../buttons/buttons';
 
 export class UsersListAction extends Action {
   constructor(props: ActionProps) {
     super(props);
     this.name = 'UsersListAction';
   }
-
-  private actionsButtons = Telegraf.Extra.markdown().markup(m => {
-    return m.keyboard(['🎲 Список игроков', '🎭 Список персонажей', '⬅ Назад']);
-  });
 
   public test(message: IncomingMessage): boolean {
     if (!message.text) return false;
@@ -23,6 +19,6 @@ export class UsersListAction extends Action {
     const userId = message.from?.id;
     if (!userId) return;
     const usersList = this.gameRoom.getUsersList();
-    this.bot.telegram.sendMessage(userId, `🎲 Список игроков:\n\n${usersList}`, this.actionsButtons); // refresh
+    this.bot.telegram.sendMessage(userId, `🎲 Список игроков:\n\n${usersList}`, infoButtons); // refresh
   }
 }
