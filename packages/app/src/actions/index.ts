@@ -13,4 +13,5 @@ export { ExecutionDefenceAction } from './ExecutionDefenceAction'; // eslint-dis
 export { RulesAction } from './RulesAction'; // eslint-disable-line
 export { IAmNotAction } from './IAmNotAction'; // eslint-disable-line
 export { ExecutionIAmNotAction } from './ExecutionIAmNotAction'; // eslint-disable-line
+export { StatusAction } from './StatusAction'; // eslint-disable-line
 // export { StatusAction } from './StatusAction'; // eslint-disable-line
