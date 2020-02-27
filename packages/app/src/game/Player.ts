@@ -14,6 +14,10 @@ export class Player {
   public points = 0;
   private _character: Character;
 
+  public attack: null | User['userId'] = null;
+  public defence: null | User['userId'] = null;
+  public characters: string[] = [];
+
   constructor(player: User) {
     Object.assign(this, player);
   }

@@ -10,8 +10,9 @@ import {
   persons,
   // mockPlayers
 } from '../mocks/mocks';
+// import { getStatus } from './utils';
 
-enum TurnType {
+export enum TurnType {
   attack = 'attack',
   defence = 'defence',
   character = 'character',
@@ -22,20 +23,36 @@ interface Turn {
   data: ActionData | CharacterData;
 }
 
-interface ActionData {
+export interface ActionData {
   userId: number;
   opponentId: number;
 }
 
-interface CharacterData {
+export interface CharacterData {
   userId: number;
   characterName: string;
 }
 
+export interface StatusData {
+  round: number;
+  data: UserStatus[];
+}
+
+export interface UserStatus {
+  username: Player['name'];
+  points: number;
+  characterNames: string[];
+  attackPlayer: Player['name'];
+  defencePlayer: Player['name'];
+  opponentAttacksList: Player['name'][];
+  opponentDefencesList: Player['name'][];
+}
+
 export class Game {
   public round = 0;
+  public turn = 0;
 
-  private players: Player[] = [];
+  public players: Player[] = [];
   public events: Turn[] = [];
   public turns: Turn[] = [];
   public rules: Character[] = [];
@@ -72,7 +89,7 @@ export class Game {
     return find(this.players, { userId });
   }
 
-  public getCharactersList(): string {
+  public getCharactersList(): string[] {
     return this.players.map(player => player?.character.name);
   }
 
@@ -80,6 +97,7 @@ export class Game {
     if (this.isTurnEnd()) {
       console.log('isTurnEnd');
       this.events.push(...this.turns);
+      this.turn += 1;
       this.turns = [];
       if (this.isRoundEnd()) {
         // checkConflict
@@ -109,8 +127,29 @@ export class Game {
     });
   }
 
+  public canDoAction(userId: User['userId'], action: TurnType, characterName?: string): boolean {
+    const player = this.getPlayer(userId);
+    if (!player) return false;
+    if (action === TurnType.character && characterName) {
+      return !player.characters.includes(characterName);
+    }
+    return !player[action];
+  }
+
   public makeTurn(turn: Turn): void {
     this.turns.push(turn);
+
+    const { type, data } = turn;
+    const player = this.getPlayer(data.userId);
+    // TODO: лишняя проверка
+    if (!player) return;
+
+    if (type !== TurnType.character) {
+      player[type] = (data as ActionData).opponentId;
+    } else {
+      player.characters.push((data as CharacterData).characterName);
+    }
+
     this.checkTurnEnd();
   }
 
@@ -145,12 +184,43 @@ export class Game {
 
     return attacks.length === this.players.length && defence.length === this.players.length;
   }
+
+  private getOpponentActionList(userId: User['userId'], type: TurnType.attack | TurnType.defence): Player['name'][] {
+    const opponentAttacks = this.events.filter(
+      event => event.type === TurnType[type] && (event.data as ActionData).opponentId === userId,
+    );
+    return opponentAttacks.map(item => this.getPlayer(item.data.userId)?.name || '').filter(i => !!i);
+  }
+
+  public getStatusData(): StatusData {
+    const data = this.players.map(player => {
+      // трэшак
+      const attackPlayer = (player.attack && this.getPlayer(player.attack)?.name) || '';
+      const defencePlayer = (player.defence && this.getPlayer(player.defence)?.name) || '';
+
+      return {
+        username: player.name,
+        points: player.points,
+        characterNames: player.characters,
+        attackPlayer,
+        defencePlayer,
+        opponentAttacksList: this.getOpponentActionList(player.userId, TurnType.attack),
+        opponentDefencesList: this.getOpponentActionList(player.userId, TurnType.defence),
+      };
+    });
+    return {
+      round: this.round,
+      data,
+    };
+  }
 }
 
 // const game = new Game({ players: mockPlayers });
 
 // console.log(game.getPlayer(0)?.characterName);
 // game.attack({ userId: 0, opponentId: 1 });
+// console.log(game.canDoAction(0, TurnType.attack));
+// console.log(getStatus(game.getStatusData()));
 // game.attack({ userId: 1, opponentId: 2 });
 // // game.attack({ userId: 2, opponentId: 1 });
 // game.defence({ userId: 0, opponentId: 2 });

@@ -7,6 +7,7 @@ import join from 'lodash/join';
 
 import Action, { ActionProps } from './Action'; // eslint-disable-line
 import { menuButtons } from '../buttons/buttons';
+import { CharacterData, ActionData, TurnType } from '../game';
 
 export class StatusAction extends Action {
   constructor(props: ActionProps) {
@@ -22,18 +23,18 @@ export class StatusAction extends Action {
   public exec(message: IncomingMessage): void {
     const userId = message.from?.id;
     if (!userId) return;
-    const round = this.gameRoom.game.round;
+    const { round } = this.gameRoom.game;
     const username = message.from?.username;
     const points = this.gameRoom.game.getPlayer(userId)?.points;
 
-    const attack = find(this.gameRoom.game.events, { type: 'attack', data: { userId } });
-    const defence = find(this.gameRoom.game.events, { type: 'defence', data: { userId } });
+    const attack = find(this.gameRoom.game.events, { type: TurnType.attack, data: { userId } });
+    const defence = find(this.gameRoom.game.events, { type: TurnType.defence, data: { userId } });
 
     const opponentAttacks = this.gameRoom.game.events.filter(
-      event => event.type === 'attack' && event.data.opponentId === userId,
+      event => event.type === 'attack' && (event.data as ActionData).opponentId === userId,
     );
     const opponentDefences = this.gameRoom.game.events.filter(
-      event => event.type === 'defence' && event.data.opponentId === userId,
+      event => event.type === 'defence' && (event.data as ActionData).opponentId === userId,
     );
     const characters = this.gameRoom.game.events.filter(
       event => event.type === 'character' && event.data.userId === userId,
@@ -41,24 +42,24 @@ export class StatusAction extends Action {
 
     let attackPlayer = '';
     if (attack) {
-      attackPlayer = `@${this.gameRoom.game.getPlayer(attack.data.opponentId)?.name}`;
+      attackPlayer = `@${this.gameRoom.game.getPlayer((attack.data as ActionData).opponentId)?.name}`;
     }
     let defencePlayer = '';
     if (defence) {
-      defencePlayer = `@${this.gameRoom.game.getPlayer(defence.data.opponentId)?.name}`;
+      defencePlayer = `@${this.gameRoom.game.getPlayer((defence.data as ActionData).opponentId)?.name}`;
     }
 
-    let opponentAttacksList = [];
+    let opponentAttacksList: string[] = [];
     if (opponentAttacks) {
       opponentAttacksList = opponentAttacks.map(item => `@${this.gameRoom.game.getPlayer(item.data.userId)?.name}`);
     }
-    let opponentDefencesList = [];
+    let opponentDefencesList: string[] = [];
     if (opponentDefences) {
       opponentDefencesList = opponentDefences.map(item => `@${this.gameRoom.game.getPlayer(item.data.userId)?.name}`);
     }
-    let characterNames = [];
+    let characterNames: string[] = [];
     if (characters) {
-      characterNames = characters.map(item => item.data.characterName);
+      characterNames = characters.map(item => (item.data as CharacterData).characterName);
     }
     // const character = this.gameRoom.game.getPlayer(userId)?.character;
     this.bot.telegram.sendMessage(
