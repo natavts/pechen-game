@@ -5,7 +5,7 @@ import { IncomingMessage } from 'telegraf/typings/telegram-types'; // eslint-dis
 // import find from 'lodash/find';
 
 import Action, { ActionProps } from './Action'; // eslint-disable-line
-import { menuButtons } from '../buttons/buttons';
+import { menuButtons } from '../buttons';
 
 export class WhoAmIAction extends Action {
   constructor(props: ActionProps) {

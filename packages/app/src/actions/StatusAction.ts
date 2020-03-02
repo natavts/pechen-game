@@ -6,7 +6,7 @@ import find from 'lodash/find';
 import join from 'lodash/join';
 
 import Action, { ActionProps } from './Action'; // eslint-disable-line
-import { menuButtons } from '../buttons/buttons';
+import { menuButtons } from '../buttons';
 import { CharacterData, ActionData, TurnType } from '../game';
 
 export class StatusAction extends Action {

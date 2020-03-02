@@ -4,7 +4,7 @@
 import { IncomingMessage } from 'telegraf/typings/telegram-types'; // eslint-disable-line
 
 import Action, { ActionProps } from './Action'; // eslint-disable-line
-import { infoButtons } from '../buttons/buttons';
+import { infoButtons } from '../buttons';
 
 export class CharactersListAction extends Action {
   constructor(props: ActionProps) {

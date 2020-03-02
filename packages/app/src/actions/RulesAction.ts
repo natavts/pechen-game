@@ -5,7 +5,7 @@ import join from 'lodash/join';
 import { IncomingMessage } from 'telegraf/typings/telegram-types'; // eslint-disable-line
 
 import Action, { ActionProps } from './Action'; // eslint-disable-line
-import { menuButtons } from '../buttons/buttons';
+import { menuButtons } from '../buttons';
 
 export class RulesAction extends Action {
   constructor(props: ActionProps) {

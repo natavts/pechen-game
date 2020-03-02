@@ -11,7 +11,7 @@ export class StartGameAction extends Action {
   }
 
   private joinButtons = Telegraf.Extra.markdown().markup(m => {
-    return m.keyboard(['🎮 Присоединиться!']);
+    return m.keyboard(['🎮 Присоединиться!']).resize();
   });
 
   public test(message: IncomingMessage): boolean {
