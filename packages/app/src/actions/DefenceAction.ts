@@ -19,6 +19,7 @@ export class DefenceAction extends Action {
     const userId = message.from?.id;
     if (!userId) return;
     const buttons = this.gameRoom.getUsers(userId).map(user => `🛡 ${user}`);
+    buttons.push('🏠 Главное меню');
     this.bot.telegram.sendMessage(
       userId,
       '🛡 От кого защищаемся?',

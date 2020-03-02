@@ -5,9 +5,9 @@ export const menuButtons = Telegraf.Extra.markdown().markup(m => {
 });
 
 export const actionsButtons = Telegraf.Extra.markdown().markup(m => {
-  return m.keyboard(['⚔ Атаковать', '☘ Защищаться', '📢 Я не...', '📝 Инфо...', '⬅ Назад']);
+  return m.keyboard(['⚔ Атаковать', '☘ Защищаться', '📢 Я не...', '🏠 Главное меню']);
 });
 
 export const infoButtons = Telegraf.Extra.markdown().markup(m => {
-  return m.keyboard(['🎲 Список игроков', '🎭 Список персонажей', '⬅ Назад']);
+  return m.keyboard(['🎲 Список игроков', '🎭 Список персонажей', '🏠 Главное меню']);
 });
