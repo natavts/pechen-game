@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { IncomingMessage } from 'telegraf/typings/telegram-types'; // eslint-disable-line
 
+import { TurnType } from '../game';
 import Action, { ActionProps } from './Action'; // eslint-disable-line
 import { menuButtons } from '../buttons/buttons';
 
@@ -22,7 +23,7 @@ export class ExecutionAttackAction extends Action {
     if (!userId || !message.text) return;
     const opponentName = message.text.replace('🗡 ', '');
     const opponentId = this.gameRoom.getUserId(opponentName);
-    if (opponentId) {
+    if (opponentId && opponentId !== userId && this.gameRoom.game.canDoAction(userId, TurnType.attack)) {
       this.gameRoom.game.attack({ userId, opponentId });
       this.bot.telegram.sendMessage(userId, `АТАКУЮ @${opponentName}!!!!`, menuButtons); // refresh
       return;

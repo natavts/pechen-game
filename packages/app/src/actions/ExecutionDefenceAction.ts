@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { IncomingMessage } from 'telegraf/typings/telegram-types'; // eslint-disable-line
 
+import { TurnType } from '../game';
 import Action, { ActionProps } from './Action'; // eslint-disable-line
 import { menuButtons } from '../buttons/buttons';
 
@@ -22,7 +23,7 @@ export class ExecutionDefenceAction extends Action {
     if (!userId || !message.text) return;
     const opponentName = message.text.replace('🛡 ', '');
     const opponentId = this.gameRoom.getUserId(opponentName);
-    if (opponentId) {
+    if (opponentId && opponentId !== userId && this.gameRoom.game.canDoAction(userId, TurnType.defence)) {
       this.gameRoom.game.defence({ userId, opponentId });
       this.bot.telegram.sendMessage(userId, `Защищаюсь от @${opponentName}!!!!`, menuButtons); // refresh
     } else {
