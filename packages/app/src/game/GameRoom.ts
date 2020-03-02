@@ -28,7 +28,12 @@ export class GameRoom {
     return this.count === this.players.length;
   }
 
-  public getUsers(): string[] {
+  public getUsers(userId: User['userId'] | undefined): string[] {
+    let usersList = [];
+    if (userId) {
+      usersList = this.players.filter(user => user.userId !== userId);
+      return usersList.map(user => user.name);
+    }
     return this.players.map(user => user.name);
   }
 
