@@ -41,11 +41,11 @@ export interface StatusData {
 export interface UserStatus {
   username: Player['name'];
   points: number;
-  characterNames: string[];
+  characters: string[];
   attackPlayer: Player['name'];
   defencePlayer: Player['name'];
-  opponentAttacksList: Player['name'][];
-  opponentDefencesList: Player['name'][];
+  opponentAttacks: Player['name'][];
+  opponentDefences: Player['name'][];
 }
 
 export class Game {
@@ -192,10 +192,10 @@ export class Game {
   }
 
   private getOpponentActionList(userId: User['userId'], type: TurnType.attack | TurnType.defence): Player['name'][] {
-    const opponentAttacks = this.events.filter(
+    const opponentActions = this.events.filter(
       event => event.type === TurnType[type] && (event.data as ActionData).opponentId === userId,
     );
-    return opponentAttacks.map(item => this.getPlayer(item.data.userId)?.name || '').filter(i => !!i);
+    return opponentActions.map(item => this.getPlayer(item.data.userId)?.name || '').filter(i => !!i);
   }
 
   public getStatusData(): StatusData {
@@ -207,11 +207,11 @@ export class Game {
       return {
         username: player.name,
         points: player.points,
-        characterNames: player.characters,
+        characters: player.characters,
         attackPlayer,
         defencePlayer,
-        opponentAttacksList: this.getOpponentActionList(player.userId, TurnType.attack),
-        opponentDefencesList: this.getOpponentActionList(player.userId, TurnType.defence),
+        opponentAttacks: this.getOpponentActionList(player.userId, TurnType.attack),
+        opponentDefences: this.getOpponentActionList(player.userId, TurnType.defence),
       };
     });
     return {
