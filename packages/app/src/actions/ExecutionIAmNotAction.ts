@@ -5,11 +5,11 @@ import { IncomingMessage } from 'telegraf/typings/telegram-types'; // eslint-dis
 
 import { TurnType } from '../game';
 import Action, { ActionProps } from './Action'; // eslint-disable-line
-import { menuButtons } from '../buttons/buttons';
+import { menuButtons } from '../buttons';
 import { getStatus } from '../game/utils';
 
 export class ExecutionIAmNotAction extends Action {
-  private game = this.gameRoom.game;
+  // private game = this.gameRoom.game;
   constructor(props: ActionProps) {
     super(props);
     this.name = 'ExecutionIAmNotAction';
@@ -24,12 +24,13 @@ export class ExecutionIAmNotAction extends Action {
     const userId = message.from?.id;
     if (!userId || !message.text) return;
     const characterName = message.text.replace('🙅 ', '');
-    if (this.gameRoom.game.canDoAction(userId, TurnType.character, characterName)) {
-      const currentTurn = this.game.turn;
-      this.game.character({ userId, characterName });
-      if (currentTurn !== this.game.turn) {
-        this.game.players.forEach(user => {
-          this.bot.telegram.sendMessage(user.userId, getStatus(this.game.getStatusData()), menuButtons); // refresh
+    const { game } = this.gameRoom;
+    if (game.canDoAction(userId, TurnType.character, characterName)) {
+      const currentTurn = game.turn;
+      game.character({ userId, characterName });
+      if (currentTurn !== game.turn) {
+        game.players.forEach(user => {
+          this.bot.telegram.sendMessage(user.userId, getStatus(game.getStatusData()), menuButtons); // refresh
         });
       } else {
         this.bot.telegram.sendMessage(userId, `📢 Вы сказали всем, что вы не ${characterName}`, menuButtons); // refresh
