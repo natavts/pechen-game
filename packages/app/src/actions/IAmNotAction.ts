@@ -18,7 +18,7 @@ export class IAmNotAction extends Action {
   public exec(message: IncomingMessage): void {
     const userId = message.from?.id;
     if (!userId) return;
-    const buttons = this.gameRoom.game.getCharactersList().map(character => `🙅 ${character}`);
+    const buttons = this.gameRoom.game.getCharactersList(userId).map(character => `🙅 ${character}`);
     this.bot.telegram.sendMessage(
       userId,
       '📢 Скажите всем кем вы не являетесь?',
