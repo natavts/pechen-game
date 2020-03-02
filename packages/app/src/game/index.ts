@@ -89,7 +89,13 @@ export class Game {
     return find(this.players, { userId });
   }
 
-  public getCharactersList(): string[] {
+  public getCharactersList(userId: User['userId'] | undefined): string[] {
+    if (userId) {
+      const playersList = this.players.filter(
+        player => player?.character.name !== this.getPlayer(userId)?.character.name,
+      );
+      return playersList.map(player => player?.character.name);
+    }
     return this.players.map(player => player?.character.name);
   }
 
