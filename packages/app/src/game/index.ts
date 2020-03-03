@@ -49,8 +49,8 @@ export interface UserStatus {
 }
 
 export class Game {
-  public round = 0;
-  public turn = 0;
+  public round = 1;
+  public turn = 1;
 
   public players: Player[] = [];
   public events: Turn[] = [];
@@ -107,6 +107,7 @@ export class Game {
       this.turns = [];
       if (this.isRoundEnd()) {
         // checkConflict
+        this.round += 1;
         this.setPoints();
         console.log({ players: this.players });
       }
@@ -120,8 +121,8 @@ export class Game {
       const attack = find(this.events, { data: { userId }, type: TurnType.attack }) as Turn;
       const defence = find(this.events, { data: { userId }, type: TurnType.defence }) as Turn;
 
-      const victimPlayer = this.getPlayer((attack.data as ActionData).opponentId)?.characterName;
-      const attackingPlayer = this.getPlayer((defence.data as ActionData).opponentId)?.characterName;
+      const victimPlayer = this.getPlayer((attack.data as ActionData).opponentId)?.character.name;
+      const attackingPlayer = this.getPlayer((defence.data as ActionData).opponentId)?.character.name;
 
       if (victimPlayer === character.attack) {
         player.points += 2;
@@ -195,14 +196,14 @@ export class Game {
     const opponentActions = this.events.filter(
       event => event.type === TurnType[type] && (event.data as ActionData).opponentId === userId,
     );
-    return opponentActions.map(item => this.getPlayer(item.data.userId)?.name || '').filter(i => !!i);
+    return opponentActions.map(item => `@${this.getPlayer(item.data.userId)?.name}` || '').filter(i => !!i);
   }
 
   public getStatusData(): StatusData {
     const data = this.players.map(player => {
       // трэшак
-      const attackPlayer = (player.attack && this.getPlayer(player.attack)?.name) || '';
-      const defencePlayer = (player.defence && this.getPlayer(player.defence)?.name) || '';
+      const attackPlayer = (player.attack && `@${this.getPlayer(player.attack)?.name}`) || '';
+      const defencePlayer = (player.defence && `@${this.getPlayer(player.defence)?.name}`) || '';
 
       return {
         username: player.name,
