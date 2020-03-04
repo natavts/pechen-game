@@ -19,8 +19,9 @@ export class IAmNotAction extends Action {
   public exec(message: IncomingMessage): void {
     const userId = message.from?.id;
     if (!userId) return;
-    const all = this.gameRoom.game.getCharactersList(userId);
-    const except = this.gameRoom.game.getPlayer(userId)?.characters;
+    const { game } = this.gameRoom;
+    const all = game.getCharactersList(userId);
+    const except = game.getPlayer(userId)?.characters;
     const buttons = pullAll(all, except).map(character => `🙅 ${character}`);
 
     buttons.push('🏠 Главное меню');

@@ -20,14 +20,18 @@ export class JoinAction extends Action {
   public exec(message: IncomingMessage): void {
     const userId = message.from?.id;
     if (!userId || !message.from) return;
-    if (this.gameRoom.checkUserInGame(userId)) {
+    if (!this.gameRoom.checkUserInGame(userId)) {
       // TODO: придумать что делать с чуваками без юзернейма
-      this.gameRoom.join({ userId, name: message.from.username });
-      this.bot.telegram.sendMessage(userId, '⏱ Ждем остальных...'); // refresh
+      if (!this.gameRoom.isFull()) {
+        this.gameRoom.join({ userId, name: message.from.username });
+        this.bot.telegram.sendMessage(userId, '⏱ Ждем остальных...'); // refresh
+      } else {
+        this.bot.telegram.sendMessage(userId, 'МЫ УЖЕ ИГРАЕМ А ТЫ ИДИ НАХУЙ!');
+      }
     } else {
       this.bot.telegram.sendMessage(userId, 'Ты уже в игре, дэбил 🙅 ');
     }
-    if (this.gameRoom.isFull()) {
+    if (this.gameRoom.isFull() && this.gameRoom.checkUserInGame(userId)) {
       this.gameRoom.game.players.forEach(user => {
         this.bot.telegram.sendMessage(user.userId, '👾 Игра началась!', menuButtons);
       });
