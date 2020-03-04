@@ -107,8 +107,8 @@ export class Game {
       this.turns = [];
       if (this.isRoundEnd()) {
         // checkConflict
-        this.round += 1;
         this.setPoints();
+        this.round += 1;
         console.log({ players: this.players });
       }
     }
@@ -185,7 +185,7 @@ export class Game {
     return this.turns.length === this.players.length;
   }
 
-  private isRoundEnd(): boolean {
+  public isRoundEnd(): boolean {
     const attacks = this.events.filter(e => e.type === 'attack');
     const defence = this.events.filter(e => e.type === 'defence');
 

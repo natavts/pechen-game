@@ -6,6 +6,7 @@ import { IncomingMessage } from 'telegraf/typings/telegram-types'; // eslint-dis
 import { TurnType } from '../game';
 import Action, { ActionProps } from './Action'; // eslint-disable-line
 import { menuButtons } from '../buttons';
+import { getStatus } from '../game/utils';
 
 export class ExecutionDefenceAction extends Action {
   constructor(props: ActionProps) {
@@ -21,11 +22,17 @@ export class ExecutionDefenceAction extends Action {
   public exec(message: IncomingMessage): void {
     const userId = message.from?.id;
     if (!userId || !message.text) return;
+    const { game } = this.gameRoom;
     const opponentName = message.text.replace('🛡 ', '');
     const opponentId = this.gameRoom.getUserId(opponentName);
-    if (opponentId && opponentId !== userId && this.gameRoom.game.canDoAction(userId, TurnType.defence)) {
-      this.gameRoom.game.defence({ userId, opponentId });
+    if (opponentId && opponentId !== userId && game.canDoAction(userId, TurnType.defence)) {
+      game.defence({ userId, opponentId });
       this.bot.telegram.sendMessage(userId, `Защищаюсь от @${opponentName}!!!!`, menuButtons); // refresh
+      if (game.isRoundEnd()) {
+        game.players.forEach(user => {
+          this.bot.telegram.sendMessage(user.userId, getStatus(game.getStatusData()), menuButtons); // refresh
+        });
+      }
     } else {
       this.bot.telegram.sendMessage(userId, 'нахой'); // refresh
     }

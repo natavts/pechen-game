@@ -6,7 +6,8 @@ import { StatusData } from '.';
 export const getStatus = ({ round, data }: StatusData): string => {
   return `Раунд: ${round}\n
   ${data.map(({ username, points, characters, attackPlayer, defencePlayer, opponentAttacks, opponentDefences }) => {
-    return `@${username} (Очки: ${points})
+    return `
+    @${username} (Очки: ${points})
     Ходы: ${join(characters, ', ')}
     Атаковал: ${attackPlayer}
     Защитился: ${defencePlayer}
