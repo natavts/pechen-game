@@ -19,7 +19,7 @@ const rules = {
   'no-underscore-dangle': 'off',
   'no-throw-literal': 'off',
   //
-  'react/prop-types': error,
+  // 'react/prop-types': error, natas comment
   'react/forbid-prop-types': error,
 
   'react/state-in-constructor': 'off', // ну нахера?
@@ -44,7 +44,24 @@ const rules = {
   ///
   'import/prefer-default-export': 'off', // вырубаю на переходный период, задолбаемся
   '@typescript-eslint/no-explicit-any': warn, // вырубаю на переходный период, задолбаемся
-  '@typescript-eslint/interface-name-prefix': warn, // вырубаю на переходный период, задолбаемся
+  // '@typescript-eslint/interface-name-prefix': warn, // вырубаю на переходный период, задолбаемся (natas comment)
+
+  // natas rules
+  '@typescript-eslint/explicit-function-return-type': 0,
+  '@typescript-eslint/consistent-type-assertions': 0,
+  'react/display-name': 0,
+  'react/no-unescaped-entities': 0,
+  '@typescript-eslint/camelcase': 0,
+  'react/prop-types': 1,
+  '@typescript-eslint/no-empty-interface': 1,
+  '@typescript-eslint/class-name-casing': 0,
+  '@typescript-eslint/no-use-before-define': 0, // ['error', { functions: false }]
+  'react/no-children-prop': 1,
+  '@typescript-eslint/interface-name-prefix': 0,
+  'react-hooks/rules-of-hooks': 'error', // Checks rules of Hooks
+  'react-hooks/exhaustive-deps': 'warn', // Checks effect dependencies
+  // end natas rules
+
   // 'react/button-has-type': error,
   // "object-curly-newline": "off" // очень странное правило, почитать почему
 };

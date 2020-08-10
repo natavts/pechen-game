@@ -17,25 +17,36 @@ export class JoinAction extends Action {
     return message.text.match(/Присоединиться/) != null;
   }
 
-  public exec(message: IncomingMessage): void {
-    const userId = message.from?.id;
-    if (!userId || !message.from) return;
-    if (!this.gameRoom.checkUserInGame(userId)) {
-      // TODO: придумать что делать с чуваками без юзернейма
-      if (!this.gameRoom.isFull()) {
-        this.gameRoom.join({ userId, name: message.from.username });
-        this.bot.telegram.sendMessage(userId, '⏱ Ждем остальных...'); // refresh
-      } else {
-        this.bot.telegram.sendMessage(userId, 'МЫ УЖЕ ИГРАЕМ А ТЫ ИДИ НАХУЙ!');
-      }
+  private send(userId: number, message: string): void {
+    this.bot.telegram.sendMEssage(userId, message);
+  }
+
+  // TODO: придумать что делать с чуваками без юзернейма
+  private checkFull(message: { from: { id: number; username: string } }): void {
+    const userId = message.from.id;
+
+    if (!this.gameRoom.isFull()) {
+      this.gameRoom.join({ userId, name: message.from.username });
+      this.send(userId, '⏱ Ждем остальных...'); // refresh
     } else {
-      this.bot.telegram.sendMessage(userId, 'Ты уже в игре, дэбил 🙅 ');
+      this.send(userId, 'МЫ УЖЕ ИГРАЕМ А ТЫ ИДИ НАХУЙ!');
     }
+  }
+
+  public exec(message: IncomingMessage): void {
+    const userId = message.from?.id as number;
+    if (!userId || !message.from) return;
+
+    if (!this.gameRoom.checkUserInGame(userId)) {
+      this.checkFull(message as any);
+    } else {
+      this.send(userId, 'Ты уже в игре, дэбил 🙅 ');
+    }
+
     if (this.gameRoom.isFull() && this.gameRoom.checkUserInGame(userId)) {
       this.gameRoom.game.players.forEach(user => {
-        this.bot.telegram.sendMessage(user.userId, '👾 Игра началась!', menuButtons);
+        this.send(user.userId, '👾 Игра началась!', menuButtons);
       });
     }
-    // this.bot.telegram.sendMessage(userId, 'Ждем остальных'); // refresh
   }
 }
