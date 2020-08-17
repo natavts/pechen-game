@@ -9,6 +9,8 @@ export interface Character {
 }
 
 export class Player {
+  public priorityId: number;
+  public conflictType: string | null = null;
   public userId = 0;
   public name = 'defaultName';
   public points = 0;
@@ -18,8 +20,9 @@ export class Player {
   public defence: null | User['userId'] = null;
   public characters: string[] = [];
 
-  constructor(player: User) {
+  constructor(player: User, priorityId: number) {
     Object.assign(this, player);
+    this.priorityId = priorityId;
   }
 
   public get character(): Character {

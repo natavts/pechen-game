@@ -3,13 +3,14 @@
 /* eslint-disable no-param-reassign */
 
 import find from 'lodash/find';
+import every from 'lodash/every';
+import some from 'lodash/some';
 // import join from 'lodash/join';
+import { AttackAction } from 'actions';
+import Action from 'actions/Action';
 import { Player, Character } from './Player';
 import { User } from './GameRoom';
-import {
-  persons,
-  // mockPlayers
-} from '../mocks/mocks';
+import { persons, mockPlayers, mockEvents } from '../mocks/mocks';
 // import { getStatus } from './utils';
 
 export enum TurnType {
@@ -18,7 +19,7 @@ export enum TurnType {
   character = 'character',
 }
 
-interface Turn {
+export interface Turn {
   type: TurnType;
   data: ActionData | CharacterData;
 }
@@ -36,6 +37,11 @@ export interface CharacterData {
 export interface StatusData {
   round: number;
   data: UserStatus[];
+}
+
+interface ConflictPlayer {
+  userId: number;
+  turnType: TurnType;
 }
 
 export interface UserStatus {
@@ -56,9 +62,10 @@ export class Game {
   public events: Turn[] = [];
   public turns: Turn[] = [];
   public rules: Character[] = [];
+  public conflictMode = false;
 
   constructor({ players }: { players: User[] }) {
-    this.players = players.map(p => new Player(p));
+    this.players = players.map((p, i) => new Player(p, i));
     this.start();
   }
 
@@ -70,6 +77,7 @@ export class Game {
 
   private initCharacters(): void {
     this.initRules(this.players.length);
+    console.log(this.rules);
     this.players = this.players.map((player, i) => ({
       ...player,
       character: this.rules[i],
@@ -85,30 +93,68 @@ export class Game {
     }));
   }
 
+  public setTurns(events: Turn[]): void {
+    events.forEach(e => {
+      if (this.canDoAction(e.data.userId, e.type)) {
+        console.log('setTurns -> canDoAction', this.canDoAction(e.data.userId, e.type), e);
+        this.makeTurn(e);
+      }
+    });
+  }
+
   public getPlayer(userId: User['userId']): Player | undefined {
     return find(this.players, { userId });
   }
 
-  public getCharactersList(userId: User['userId'] | undefined): string[] {
+  public getCharactersList(userId?: User['userId'] | undefined): string[] {
     if (userId) {
+      const currPlayer = this.getPlayer(userId);
       const playersList = this.players.filter(
-        player => player?.character.name !== this.getPlayer(userId)?.character.name,
+        player =>
+          player?.character.name !== currPlayer?.character.name &&
+          !currPlayer?.characters.includes(player.character.name),
       );
       return playersList.map(player => player?.character.name);
     }
     return this.players.map(player => player?.character.name);
   }
 
+  private isCanResolve(): boolean {
+    return this.players
+      .filter(p => p.conflictType)
+      .map(p => this.haveTurns(p.userId, p.conflictType))
+      .includes(true);
+  }
+
   public checkTurnEnd(): void {
-    if (this.isTurnEnd()) {
+    if (this.isAllTurns()) {
       console.log('isTurnEnd');
+      this.conflictMode = !every(this.players, { conflictType: null });
+      if (this.conflictMode) {
+        console.log('!!!!conflictMode!!!!');
+        if (this.isCanResolve()) {
+          return;
+        }
+        console.log('!!! CANT RESOLVE!!!');
+        this.players.forEach(p => {
+          if (p.conflictType) {
+            p[p.conflictType] = null;
+          }
+        });
+      }
+
       this.events.push(...this.turns);
       this.turn += 1;
       this.turns = [];
+
       if (this.isRoundEnd()) {
-        // checkConflict
+        console.log('checkTurnEnd -> isRoundEnd');
         this.setPoints();
         this.round += 1;
+        this.conflictMode = false;
+        this.players.forEach(p => {
+          p.conflictType = null;
+        });
         console.log({ players: this.players });
       }
     }
@@ -116,19 +162,16 @@ export class Game {
 
   private setPoints(): void {
     this.players.forEach(player => {
-      const { userId, character } = player;
+      const { character } = player;
 
-      const attack = find(this.events, { data: { userId }, type: TurnType.attack }) as Turn;
-      const defence = find(this.events, { data: { userId }, type: TurnType.defence }) as Turn;
+      const victim = player.attack && this.getPlayer(player.attack)?.character.name;
+      const attacking = player.defence && this.getPlayer(player.defence)?.character.name;
 
-      const victimPlayer = this.getPlayer((attack.data as ActionData).opponentId)?.character.name;
-      const attackingPlayer = this.getPlayer((defence.data as ActionData).opponentId)?.character.name;
-
-      if (victimPlayer === character.attack) {
+      if (victim && victim === character.attack) {
         player.points += 2;
       }
 
-      if (attackingPlayer === character.defence) {
+      if (attacking && attacking === character.defence) {
         player.points += 1;
       }
     });
@@ -137,25 +180,53 @@ export class Game {
   public canDoAction(userId: User['userId'], action: TurnType, characterName?: string): boolean {
     const player = this.getPlayer(userId);
     if (!player) return false;
+    if (this.conflictMode) {
+      return !!player.conflictType && action === player.conflictType;
+    }
     if (action === TurnType.character && characterName) {
       return !player.characters.includes(characterName);
     }
-    return !player[action];
+    // console.log('!!!canDoAction!!', !player[action], player);
+    return player[action] === null;
+  }
+
+  private getConflictTurnType(type: TurnType): TurnType {
+    return type === TurnType.attack ? TurnType.defence : TurnType.attack;
+  }
+
+  private checkConflict({ type, data }: Turn): void {
+    const player = this.getPlayer(data.userId);
+    const opponent = this.getPlayer((data as ActionData).opponentId);
+
+    const conflictAction = this.getConflictTurnType(type);
+
+    if (opponent && opponent[conflictAction] === player!.userId) {
+      const { conflictPlayer, conflictTurnType } =
+        player!.priorityId < opponent!.priorityId
+          ? { conflictPlayer: opponent, conflictTurnType: conflictAction }
+          : { conflictPlayer: player!, conflictTurnType: type };
+
+      conflictPlayer.conflictType = conflictTurnType;
+    }
   }
 
   public makeTurn(turn: Turn): void {
-    this.turns.push(turn);
-
     const { type, data } = turn;
     const player = this.getPlayer(data.userId);
-    // TODO: лишняя проверка
+
     if (!player) return;
 
     if (type !== TurnType.character) {
       player[type] = (data as ActionData).opponentId;
+      if (this.conflictMode) {
+        player.conflictType = null;
+      }
+      this.checkConflict(turn);
     } else {
       player.characters.push((data as CharacterData).characterName);
     }
+
+    this.turns.push(turn);
 
     this.checkTurnEnd();
   }
@@ -181,21 +252,59 @@ export class Game {
     });
   }
 
-  private isTurnEnd(): boolean {
-    return this.turns.length === this.players.length;
+  public getActionForUser(userId: number, type: TurnType): any[] {
+    const player = this.getPlayer(userId);
+    if (type === TurnType.character) {
+      return this.getCharactersList(userId);
+    }
+    const opponents = this.getOpponentActionEventsList(userId, this.getConflictTurnType(type)).map(
+      event => event.data.userId,
+    );
+    if (this.conflictMode && player?.conflictType === type) {
+      console.log(
+        'getActionForUser conflictMode',
+        userId,
+        type,
+        this.players.filter(
+          p => p.userId !== player?.userId && p.userId !== player[type] && !opponents.includes(p.userId),
+        ),
+      );
+      return this.players.filter(
+        p => p.userId !== player?.userId && p.userId !== player[type] && !opponents.includes(p.userId),
+      );
+    }
+    // console.log('opponents', userId, this.getConflictTurnType(type), opponents);
+    return player?.[type] ? [] : this.players.filter(p => p.userId !== player?.userId && !opponents.includes(p.userId));
+  }
+
+  public haveTurns(userId: number, type: TurnType): boolean {
+    return !!this.getActionForUser(userId, type).length;
+  }
+
+  private isAllTurns(): boolean {
+    return this.turns.length >= this.players.length || this.isRoundEnd();
   }
 
   public isRoundEnd(): boolean {
-    const attacks = this.events.filter(e => e.type === 'attack');
-    const defence = this.events.filter(e => e.type === 'defence');
+    const canAttack = this.players.map(p => this.haveTurns(p.userId, TurnType.attack)).includes(true);
+    // console.log(
+    //   'isRoundEnd -> canAttack',
+    //   canAttack,
+    //   this.players.map(p => this.haveTurns(p.userId, TurnType.attack)),
+    // );
+    const canDefence = this.players.map(p => this.haveTurns(p.userId, TurnType.defence)).includes(true);
+    console.log('isRoundEnd -> canDefence', canDefence);
 
-    return attacks.length === this.players.length && defence.length === this.players.length;
+    return !canAttack && !canDefence;
   }
 
-  private getOpponentActionList(userId: User['userId'], type: TurnType.attack | TurnType.defence): Player['name'][] {
-    const opponentActions = this.events.filter(
+  private getOpponentActionEventsList(userId: User['userId'], type: TurnType.attack | TurnType.defence): Turn[] {
+    return this.events.filter(
       event => event.type === TurnType[type] && (event.data as ActionData).opponentId === userId,
     );
+  }
+  private getOpponentActionList(userId: User['userId'], type: TurnType.attack | TurnType.defence): Player['name'][] {
+    const opponentActions = this.getOpponentActionEventsList(userId, type);
     return opponentActions.map(item => `@${this.getPlayer(item.data.userId)?.name}` || '').filter(i => !!i);
   }
 
@@ -223,14 +332,23 @@ export class Game {
 }
 
 // const game = new Game({ players: mockPlayers });
+// game.setTurns(mockEvents);
 
-// console.log(game.getPlayer(0)?.characterName);
-// game.attack({ userId: 0, opponentId: 1 });
-// console.log(game.canDoAction(0, TurnType.attack));
-// console.log(getStatus(game.getStatusData()));
-// game.attack({ userId: 1, opponentId: 2 });
-// // game.attack({ userId: 2, opponentId: 1 });
-// game.defence({ userId: 0, opponentId: 2 });
-// game.defence({ userId: 1, opponentId: 2 });
-// // game.defence({ userId: 2, opponentId: 0 });
+// console.log('========================================');
+// console.log('========================================');
+// console.log('========================================');
 // console.log(game.turns);
+// console.log(game.getStatusData());
+// // game.attack({ userId: 0, opponentId: 1 });
+// // console.log(game.canDoAction(0, TurnType.attack));
+// // console.log(getStatus(game.getStatusData()));
+// // game.attack({ userId: 1, opponentId: 2 });
+// // // game.attack({ userId: 2, opponentId: 1 });
+// // game.defence({ userId: 0, opponentId: 2 });
+// // game.defence({ userId: 1, opponentId: 2 });
+// // // game.defence({ userId: 2, opponentId: 0 });
+// // console.log(game.turns);
+
+// console.log('========================================');
+// console.log('========================================');
+// console.log('========================================');
