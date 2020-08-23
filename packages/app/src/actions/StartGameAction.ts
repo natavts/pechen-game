@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import Telegraf from 'telegraf';
+import { Extra } from 'telegraf';
 import { IncomingMessage } from 'telegraf/typings/telegram-types'; // eslint-disable-line
 
 import Action, { ActionProps } from './Action'; // eslint-disable-line
@@ -10,7 +10,7 @@ export class StartGameAction extends Action {
     this.name = 'StartGameAction';
   }
 
-  private joinButtons = Telegraf.Extra.markdown().markup(m => {
+  private joinButtons = Extra.markdown().markup(m => {
     return m.keyboard(['🎮 Присоединиться!']).resize();
   });
 

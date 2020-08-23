@@ -1,10 +1,7 @@
-/* eslint-disable import/no-unresolved */
-/* eslint-disable import/extensions */
-/* eslint-disable @typescript-eslint/camelcase */
 import { IncomingMessage } from 'telegraf/typings/telegram-types'; // eslint-disable-line
 
 import Action, { ActionProps } from './Action'; // eslint-disable-line
-import { actionsButtons } from '../buttons';
+import { actionsButtons } from '../buttons'; // eslint-disable-line
 
 export class ActionsAction extends Action {
   constructor(props: ActionProps) {

@@ -1,7 +1,7 @@
 /* eslint-disable import/no-unresolved */
 /* eslint-disable import/extensions */
 import join from 'lodash/join';
-import { Telegram } from 'telegraf';
+import Telegraf, { ContextMessageUpdate } from 'telegraf';
 import { Game } from '.';
 import { actionButtons, getMenuButtons } from '../buttons';
 
@@ -20,7 +20,7 @@ export const getStatus = (game: Game): string => {
   `;
 };
 
-export const startConflictMode = (game: Game, bot: Telegram): void => {
+export const startConflictMode = (game: Game, bot: Telegraf<ContextMessageUpdate>): void => {
   const conflictPlayers = game.players.filter(p => p.conflictType);
   conflictPlayers.forEach(player => {
     const action = player.conflictType === 'attack' ? 'атаковать' : 'защищаться от';
@@ -39,7 +39,7 @@ export const startConflictMode = (game: Game, bot: Telegram): void => {
     });
 };
 
-export const checkRoundEnd = (game: Game, bot: Telegram) => {
+export const checkRoundEnd = (game: Game, bot: Telegraf<ContextMessageUpdate>): void => {
   if (game.isRoundEnd()) {
     game.players.forEach(user => {
       bot.telegram.sendMessage(user.userId, getStatus(game), getMenuButtons(user.userId, game));

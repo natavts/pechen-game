@@ -1,7 +1,7 @@
 /* eslint-disable import/no-unresolved */
 /* eslint-disable import/extensions */
 /* eslint-disable @typescript-eslint/camelcase */
-import { IncomingMessage } from 'telegraf/typings/telegram-types'; // eslint-disable-line
+import { IncomingMessage, ExtraEditMessage } from 'telegraf/typings/telegram-types'; // eslint-disable-line
 
 import Action, { ActionProps } from './Action'; // eslint-disable-line
 import { getMenuButtons } from '../buttons';
@@ -17,7 +17,7 @@ export class JoinAction extends Action {
     return message.text.match(/Присоединиться/) != null;
   }
 
-  private send(userId: number, message: string, options?: any = {}): void {
+  private send(userId: number, message: string, options: ExtraEditMessage = {}): void {
     this.bot.telegram.sendMessage(userId, message, options);
   }
 

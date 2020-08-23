@@ -20,6 +20,6 @@ export class InfoAction extends Action {
   public exec(message: IncomingMessage): void {
     const userId = message.from?.id;
     if (!userId) return;
-    this.bot.telegram.sendMessage(userId, 'Выберите действие', infoButtons); // refresh
+    this.bot.telegram.sendMessage(userId, 'Выберите действие', infoButtons);
   }
 }

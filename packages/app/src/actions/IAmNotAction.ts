@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/camelcase */
-import Telegraf from 'telegraf';
+import { Extra } from 'telegraf';
 import { IncomingMessage } from 'telegraf/typings/telegram-types'; // eslint-disable-line
 
 import Action, { ActionProps } from './Action'; // eslint-disable-line
@@ -25,7 +24,7 @@ export class IAmNotAction extends Action {
     this.bot.telegram.sendMessage(
       userId,
       '📢 Скажите всем кем вы не являетесь?',
-      Telegraf.Extra.markdown().markup(m => {
+      Extra.markdown().markup(m => {
         return m.keyboard(buttons);
       }),
     ); // refresh

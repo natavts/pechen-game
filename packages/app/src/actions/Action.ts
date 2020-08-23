@@ -1,4 +1,5 @@
 import Telegraf, { ContextMessageUpdate } from 'telegraf';
+
 // eslint-disable-next-line import/no-unresolved
 import { GameRoom } from 'game/GameRoom';
 
@@ -8,19 +9,11 @@ export type ActionProps = {
   [name: string]: any;
 };
 
-export interface IAction {
-  // new (props: ActionProps): Action;
-  bot: Telegraf<ContextMessageUpdate>;
-  name: string;
-  log(): void;
-  test?(): boolean;
-  exec?(): void;
-}
-
-export default class Action implements IAction {
+export default class Action {
   public bot: Telegraf<ContextMessageUpdate>;
   public gameRoom: GameRoom;
   public name: string;
+
   constructor(props: ActionProps) {
     const { bot, gameRoom } = props;
     this.bot = bot;

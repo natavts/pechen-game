@@ -1,9 +1,7 @@
-/* eslint-disable @typescript-eslint/camelcase */
-import Telegraf from 'telegraf';
 import { IncomingMessage } from 'telegraf/typings/telegram-types'; // eslint-disable-line
 
 import Action, { ActionProps } from './Action'; // eslint-disable-line
-import { actionButtons } from '../buttons';
+import { actionButtons } from '../buttons'; // eslint-disable-line
 
 export class DefenceAction extends Action {
   constructor(props: ActionProps) {

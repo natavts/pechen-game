@@ -5,14 +5,11 @@
 import find from 'lodash/find';
 import every from 'lodash/every';
 import maxBy from 'lodash/maxBy';
-import some from 'lodash/some';
 import pullAll from 'lodash/pullAll';
 // import join from 'lodash/join';
-import { AttackAction } from 'actions';
-import Action from 'actions/Action';
 import { Player, Character } from './Player';
 import { User } from './GameRoom';
-import { persons, mockPlayers, mockEvents } from '../mocks/mocks';
+import { persons } from '../mocks/mocks';
 // import { getStatus } from './utils';
 
 export enum TurnType {
