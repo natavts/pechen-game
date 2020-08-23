@@ -6,7 +6,7 @@ import { IncomingMessage } from 'telegraf/typings/telegram-types'; // eslint-dis
 import { TurnType } from '../game';
 import Action, { ActionProps } from './Action'; // eslint-disable-line
 import { menuButtons } from '../buttons';
-import { getStatus } from '../game/utils';
+import { getStatus, startConflictMode } from '../game/utils';
 
 export class ExecutionIAmNotAction extends Action {
   // private game = this.gameRoom.game;
@@ -34,6 +34,9 @@ export class ExecutionIAmNotAction extends Action {
         });
       } else {
         this.bot.telegram.sendMessage(userId, `📢 Вы сказали всем, что вы не ${characterName}`, menuButtons); // refresh
+        if (game.conflictMode) {
+          startConflictMode(game, this.bot);
+        }
       }
     } else {
       this.bot.telegram.sendMessage(userId, `нельзя`, menuButtons);

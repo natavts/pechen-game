@@ -3,6 +3,7 @@
 import join from 'lodash/join';
 import find from 'lodash/find';
 import { Game } from './index';
+import { mockEvents } from '../mocks/mocks';
 
 export interface User {
   userId: number;
@@ -11,12 +12,33 @@ export interface User {
 
 export class GameRoom {
   private count: number;
-  private players: User[] = [];
+  // private players: User[] = [];
+  private players: User[] = [
+    // {
+    //   userId: 80081115,
+    //   name: 'natavts',
+    // },
+    {
+      userId: 2,
+      name: 'p2',
+    },
+    {
+      userId: 3,
+      name: 'p3',
+    },
+    {
+      userId: 80081115,
+      name: 'natavts',
+    },
+  ];
 
   public game: Game;
 
   constructor(count: number) {
     this.count = count;
+    if (this.isFull()) {
+      this.startGame();
+    }
   }
   public join(user: User): void {
     if (this.isFull()) return;
@@ -55,5 +77,6 @@ export class GameRoom {
     if (this.game) return;
     this.game = new Game({ players: this.players });
     console.log('game', this.game);
+    this.game.setTurns(mockEvents);
   }
 }

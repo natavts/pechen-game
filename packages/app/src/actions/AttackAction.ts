@@ -3,6 +3,7 @@ import Telegraf from 'telegraf';
 import { IncomingMessage } from 'telegraf/typings/telegram-types'; // eslint-disable-line
 
 import Action, { ActionProps } from './Action'; // eslint-disable-line
+import { actionButtons } from '../buttons';
 
 export class AttackAction extends Action {
   constructor(props: ActionProps) {
@@ -18,14 +19,6 @@ export class AttackAction extends Action {
   public exec(message: IncomingMessage): void {
     const userId = message.from?.id;
     if (!userId) return;
-    const buttons = this.gameRoom.getUsers(userId).map(user => `🗡 ${user}`);
-    buttons.push('🏠 Главное меню');
-    this.bot.telegram.sendMessage(
-      userId,
-      '💣 Кого атакуем?',
-      Telegraf.Extra.markdown().markup(m => {
-        return m.keyboard(buttons);
-      }),
-    ); // refresh
+    this.bot.telegram.sendMessage(userId, '💣 Кого атакуем?', actionButtons(this.gameRoom.game, 'attack', userId));
   }
 }

@@ -22,6 +22,6 @@ export class StartGameAction extends Action {
   public exec(message: IncomingMessage): void {
     const userId = message.from?.id;
     if (!userId) return;
-    this.bot.telegram.sendMessage(userId, 'вапщвша', this.joinButtons);
+    this.bot.telegram.sendMessage(userId, 'ищу игру', this.joinButtons);
   }
 }

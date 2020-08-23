@@ -17,8 +17,8 @@ export class JoinAction extends Action {
     return message.text.match(/Присоединиться/) != null;
   }
 
-  private send(userId: number, message: string): void {
-    this.bot.telegram.sendMEssage(userId, message);
+  private send(userId: number, message: string, options?: any = {}): void {
+    this.bot.telegram.sendMessage(userId, message, options);
   }
 
   // TODO: придумать что делать с чуваками без юзернейма

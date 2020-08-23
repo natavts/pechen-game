@@ -13,7 +13,7 @@ import './game';
 export default class App extends ServerApp {
   async init() {
     await super.init();
-    const gameRoom = new GameRoom(2);
+    const gameRoom = new GameRoom(3);
     if (this.config.telegram) {
       this.bot = new Telegraf(this.config.telegram.token);
       this.bot.startPolling();
