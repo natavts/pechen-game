@@ -20,7 +20,6 @@ export class ExecutionAttackAction extends Action {
   }
 
   public exec(message: IncomingMessage): void {
-    console.log("ExecutionAttackAction -> exec -> IncomingMessage", 123123123)
     const userId = message.from?.id;
     if (!userId || !message.text) return;
     const { game } = this.gameRoom;

@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import Telegraf from 'telegraf';
 import { IncomingMessage } from 'telegraf/typings/telegram-types'; // eslint-disable-line
 
 import Action, { ActionProps } from './Action'; // eslint-disable-line

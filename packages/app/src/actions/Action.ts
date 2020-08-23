@@ -1,16 +1,16 @@
-import { Telegram } from 'telegraf';
+import Telegraf, { ContextMessageUpdate } from 'telegraf';
 // eslint-disable-next-line import/no-unresolved
 import { GameRoom } from 'game/GameRoom';
 
 export type ActionProps = {
-  bot: Telegram;
+  bot: Telegraf<ContextMessageUpdate>;
   gameRoom: GameRoom;
   [name: string]: any;
 };
 
 export interface IAction {
   // new (props: ActionProps): Action;
-  bot: Telegram;
+  bot: Telegraf<ContextMessageUpdate>;
   name: string;
   log(): void;
   test?(): boolean;
@@ -18,7 +18,7 @@ export interface IAction {
 }
 
 export default class Action implements IAction {
-  public bot: Telegram;
+  public bot: Telegraf<ContextMessageUpdate>;
   public gameRoom: GameRoom;
   public name: string;
   constructor(props: ActionProps) {
