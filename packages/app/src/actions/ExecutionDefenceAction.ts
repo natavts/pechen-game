@@ -21,18 +21,22 @@ export class ExecutionDefenceAction extends Action {
   public exec(message: IncomingMessage): void {
     const userId = message.from?.id;
     if (!userId || !message.text) return;
+
     const { game } = this.gameRoom;
     const opponentName = message.text.replace('🛡 ', '');
     const opponentId = this.gameRoom.getUserId(opponentName);
+
     if (opponentId && opponentId !== userId && game.canDoAction(userId, TurnType.defence)) {
-      game.defence({ userId, opponentId });
+      game.makeTurn({ type: TurnType.defence, data: { userId, opponentId } });
       this.bot.telegram.sendMessage(userId, `Защищаюсь от @${opponentName}!!!!`, getMenuButtons(userId, game));
+
       if (game.conflictMode) {
         startConflictMode(game, this.bot);
       }
+
       checkRoundEnd(game, this.bot);
     } else {
-      this.bot.telegram.sendMessage(userId, 'нахой'); // refresh
+      this.bot.telegram.sendMessage(userId, 'нахой');
     }
   }
 }

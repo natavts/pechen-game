@@ -6,6 +6,7 @@ import find from 'lodash/find';
 import every from 'lodash/every';
 import maxBy from 'lodash/maxBy';
 import pullAll from 'lodash/pullAll';
+import some from 'lodash/some';
 // import join from 'lodash/join';
 import { Player, Character } from './Player';
 import { User } from './GameRoom';
@@ -20,19 +21,13 @@ export enum TurnType {
 
 export interface Turn {
   type: TurnType;
-  data: ActionData | CharacterData;
+  data: {
+    userId: Player['userId'];
+    opponentId?: Player['userId'];
+    characterName?: string;
+  };
   isConflicted?: boolean;
   round: number;
-}
-
-export interface ActionData {
-  userId: number;
-  opponentId: number;
-}
-
-export interface CharacterData {
-  userId: number;
-  characterName: string;
 }
 
 export interface UserStatus {
@@ -70,63 +65,57 @@ export class Game {
 
   private initCharacters(): void {
     this.initRules(this.players.length);
-    this.players = this.players.map((player, i) => ({
-      ...player,
-      character: this.rules[i],
-    }));
+    this.players.forEach((player, i) => {
+      player.character = this.rules[i];
+    });
   }
 
   public initRules(count: number): void {
     const characters = persons.slice(0, count);
     this.rules = characters.map((person, i) => ({
-      name: characters[i],
+      name: person,
       attack: characters[i + 1] || characters[0],
       defence: characters[i - 1] || characters[characters.length - 1],
     }));
   }
 
   public setTurns(events: Turn[]): void {
-    events.forEach(e => {
-      if (this.canDoAction(e.data.userId, e.type, e.data.characterName)) {
-        console.log('setTurns -> canDoAction', this.canDoAction(e.data.userId, e.type, e.data.characterName), e);
-        this.makeTurn(e);
+    events.forEach(event => {
+      if (this.canDoAction(event.data.userId, event.type, event.data.characterName)) {
+        this.makeTurn(event);
       }
     });
   }
 
-  public getPlayer(userId: User['userId']): Player | undefined {
-    return find(this.players, { userId });
+  public getPlayer(userId: User['userId']): Player {
+    return find(this.players, { userId }) as Player;
   }
 
-  public getCharactersList(userId?: User['userId'] | undefined): string[] {
-    if (userId) {
-      const currPlayer = this.getPlayer(userId);
-      const playersList = this.players.filter(
-        player =>
-          player?.character.name !== currPlayer?.character.name &&
-          !currPlayer?.characters.includes(player.character.name),
-      );
-      return playersList.map(player => player?.character.name);
-    }
-    return this.players.map(player => player?.character.name);
+  public getAvalibleCharactersForUser(userId: User['userId']): string[] {
+    const currPlayer = this.getPlayer(userId);
+    const playersList = this.players.filter(
+      player =>
+        player.character.name !== currPlayer.character.name && !currPlayer.characters.includes(player.character.name),
+    );
+    return playersList.map(player => player.character.name);
   }
 
   private isCanResolve(): boolean {
-    return this.players
-      .filter(p => p.conflictType)
-      .map(p => this.haveTurns(p.userId, p.conflictType))
-      .includes(true);
+    return some(this.players, p => this.haveAnyTurns(p.userId));
   }
 
   public checkTurnEnd(): void {
     if (this.isAllTurns()) {
       console.log('isTurnEnd');
-      this.conflict = !every(this.players, { conflictType: null });
-      if (this.conflict) {
+      // this.conflict = !every(this.players, { conflictType: null });
+      this.conflictMode = !every(this.players, { conflictType: null });
+      // if (this.conflict) {
+      if (this.conflictMode) {
         console.log('!!!!conflictMode!!!!');
         if (this.isCanResolve()) {
           console.log('checkTurnEnd -> isCanResolve');
-          this.conflictMode = this.conflict;
+          // this.conflictMode = this.conflict;
+          this.conflictMode = false;
           return;
         }
         console.log('!!! CANT RESOLVE!!!');
@@ -136,8 +125,9 @@ export class Game {
           }
         });
       }
-      this.conflict = false;
-      this.conflictMode = this.conflict;
+      // this.conflict = false;
+      // this.conflictMode = this.conflict;
+      this.conflictMode = false;
       console.log('!!! NEXT TURN !!!');
 
       this.events.push(...this.turns);
@@ -149,7 +139,7 @@ export class Game {
         this.setPoints();
         this.round += 1;
         this.conflictMode = false;
-        this.conflict = false;
+        // this.conflict = false;
         this.players.forEach(p => {
           p.conflictType = null;
           p.attack = null;
@@ -178,8 +168,8 @@ export class Game {
     this.players.forEach(player => {
       const { character } = player;
 
-      const victim = player.attack && this.getPlayer(player.attack)?.character.name;
-      const attacking = player.defence && this.getPlayer(player.defence)?.character.name;
+      const victim = player.attack && this.getPlayer(player.attack).character.name;
+      const attacking = player.defence && this.getPlayer(player.defence).character.name;
 
       if (victim && victim === character.attack) {
         player.points += 2;
@@ -193,18 +183,16 @@ export class Game {
 
   public canDoAction(userId: User['userId'], action: TurnType, characterName?: string): boolean {
     const player = this.getPlayer(userId);
-    if (!player) return false;
     if (this.conflictMode) {
       console.log('canDoAction -> this.conflictMode', this.conflictMode);
       return !!player.conflictType && action === player.conflictType;
     }
-    if (this.turns.filter(t => t.data.userId === userId).length) {
+    if (find(this.turns, { userId })) {
       return false;
     }
     if (action === TurnType.character && characterName) {
       return !player.characters.includes(characterName);
     }
-    // console.log('!!!canDoAction!!', !player[action], player);
     return this.haveTurns(userId, action);
   }
 
@@ -214,15 +202,15 @@ export class Game {
 
   private checkConflict({ type, data }: Turn): void {
     const player = this.getPlayer(data.userId);
-    const opponent = this.getPlayer((data as ActionData).opponentId);
+    const opponent = this.getPlayer(data.opponentId);
 
     const conflictAction = this.getConflictTurnType(type);
 
-    if (opponent && opponent[conflictAction] === player!.userId) {
+    if (opponent[conflictAction] === player.userId) {
       const { conflictPlayer, conflictTurnType } =
-        player!.priorityId < opponent!.priorityId
+        player.priorityId < opponent.priorityId
           ? { conflictPlayer: opponent, conflictTurnType: conflictAction }
-          : { conflictPlayer: player!, conflictTurnType: type };
+          : { conflictPlayer: player, conflictTurnType: type };
 
       conflictPlayer.conflictType = conflictTurnType;
       const conflictedTurn = find(this.turns, {
@@ -239,44 +227,23 @@ export class Game {
 
     const player = this.getPlayer(data.userId);
 
-    if (!player) return;
-
     if (type !== TurnType.character) {
-      player[type] = (data as ActionData).opponentId;
+      player[type] = data.opponentId;
+
       if (this.conflictMode) {
         player.conflictType = null;
       }
+
       this.checkConflict(turn);
     } else {
-      player.characters.push((data as CharacterData).characterName);
+      player.characters.push(data.characterName as string);
     }
 
     this.checkTurnEnd();
   }
 
-  public attack(data: ActionData): void {
-    this.makeTurn({
-      type: TurnType.attack,
-      data,
-    });
-  }
-
-  public defence(data: ActionData): void {
-    this.makeTurn({
-      type: TurnType.defence,
-      data,
-    });
-  }
-
-  public character(data: CharacterData): void {
-    this.makeTurn({
-      type: TurnType.character,
-      data,
-    });
-  }
-
   public getAvalibleCharacters(userId: number): string[] {
-    const all = this.getCharactersList(userId);
+    const all = this.getAvalibleCharactersForUser(userId);
     const except = this.getPlayer(userId)?.characters;
     return pullAll(all, except);
   }
@@ -284,12 +251,13 @@ export class Game {
   public getActionForUser(userId: number, type: TurnType): any[] {
     const player = this.getPlayer(userId);
     if (type === TurnType.character) {
-      return this.getCharactersList(userId);
+      return this.getAvalibleCharactersForUser(userId);
     }
     const opponents = this.getOpponentActionEventsList(userId, this.getConflictTurnType(type), this.events).map(
       event => event.data.userId,
     );
-    if (this.conflict && player?.conflictType === type) {
+    // if (this.conflict && player?.conflictType === type) {
+    if (this.conflictMode && player?.conflictType === type) {
       const conflictOpponents = this.getOpponentActionEventsList(userId, this.getConflictTurnType(type), [
         ...this.events,
         ...this.turns,
@@ -354,7 +322,7 @@ export class Game {
         event.round === this.round &&
         !event.isConflicted &&
         event.type === TurnType[type] &&
-        (event.data as ActionData).opponentId === userId,
+        (event.data as Turn['data']).opponentId === userId,
     );
   }
   private getOpponentActionList(

@@ -22,21 +22,25 @@ export class ExecutionIAmNotAction extends Action {
   public exec(message: IncomingMessage): void {
     const userId = message.from?.id;
     if (!userId || !message.text) return;
+
     const characterName = message.text.replace('🙅 ', '');
     const { game } = this.gameRoom;
+
     if (game.canDoAction(userId, TurnType.character, characterName)) {
       const currentTurn = game.turn;
-      game.character({ userId, characterName });
+      game.makeTurn({ type: TurnType.character, data: { userId, characterName } });
+
       if (currentTurn !== game.turn) {
         game.players.forEach(user => {
-          this.bot.telegram.sendMessage(user.userId, getStatus(game), getMenuButtons(user.userId, game)); // refresh
+          this.bot.telegram.sendMessage(user.userId, getStatus(game), getMenuButtons(user.userId, game));
         });
       } else {
         this.bot.telegram.sendMessage(
           userId,
           `📢 Вы сказали всем, что вы не ${characterName}`,
           getMenuButtons(userId, game),
-        ); // refresh
+        );
+
         if (game.conflictMode) {
           startConflictMode(game, this.bot);
         }

@@ -26,7 +26,7 @@ export class ExecutionAttackAction extends Action {
     const opponentId = this.gameRoom.getUserId(opponentName);
     console.log('ExecutionAttackAction', opponentId, opponentId !== userId, game.canDoAction(userId, TurnType.attack));
     if (opponentId && opponentId !== userId && game.canDoAction(userId, TurnType.attack)) {
-      game.attack({ userId, opponentId });
+      game.makeTurn({ type: TurnType.attack, data: { userId, opponentId } });
       this.bot.telegram.sendMessage(userId, `АТАКУЮ @${opponentName}!!!!`, getMenuButtons(userId, game));
       if (game.conflictMode) {
         startConflictMode(game, this.bot);
