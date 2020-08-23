@@ -1,9 +1,8 @@
 /* eslint-disable import/no-unresolved */
 /* eslint-disable import/extensions */
-/* eslint-disable @typescript-eslint/camelcase */
-import { IncomingMessage } from 'telegraf/typings/telegram-types'; // eslint-disable-line
+import { IncomingMessage } from 'telegraf/typings/telegram-types';
 
-import Action, { ActionProps } from './Action'; // eslint-disable-line
+import Action, { ActionProps } from './Action';
 import { getMenuButtons } from '../buttons';
 
 export class MenuAction extends Action {

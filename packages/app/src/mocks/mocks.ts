@@ -1,3 +1,5 @@
+/* eslint-disable import/extensions */
+// eslint-disable-next-line import/no-unresolved
 import { Turn } from '../game';
 
 export const persons = ['Печенька', 'Синий', 'Стронций', '37', 'Персы', 'Косинус'];

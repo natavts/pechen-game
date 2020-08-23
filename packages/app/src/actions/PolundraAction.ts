@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import shuffle from 'lodash/shuffle'; // eslint-disable-line
+import shuffle from 'lodash/shuffle';
 import { IncomingMessage } from 'telegraf/typings/telegram-types'; // eslint-disable-line
 import Action, { ActionProps } from './Action'; // eslint-disable-line
 

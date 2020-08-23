@@ -1,6 +1,5 @@
 /* eslint-disable import/no-unresolved */
 /* eslint-disable import/extensions */
-/* eslint-disable @typescript-eslint/camelcase */
 import { Extra, Markup } from 'telegraf';
 import { ExtraEditMessage } from 'telegraf/typings/telegram-types';
 import { Game, TurnType } from '../game';

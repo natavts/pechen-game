@@ -58,8 +58,8 @@ const rules = {
   '@typescript-eslint/no-use-before-define': 0, // ['error', { functions: false }]
   'react/no-children-prop': 1,
   '@typescript-eslint/interface-name-prefix': 0,
-  'react-hooks/rules-of-hooks': 'error', // Checks rules of Hooks
-  'react-hooks/exhaustive-deps': 'warn', // Checks effect dependencies
+  // 'react-hooks/rules-of-hooks': 'error', // Checks rules of Hooks
+  // 'react-hooks/exhaustive-deps': 'warn', // Checks effect dependencies
   // end natas rules
 
   // 'react/button-has-type': error,
