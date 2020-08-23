@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import Telegraf from 'telegraf';
-import pullAll from 'lodash/pullAll';
 import { IncomingMessage } from 'telegraf/typings/telegram-types'; // eslint-disable-line
 
 import Action, { ActionProps } from './Action'; // eslint-disable-line
@@ -20,9 +19,7 @@ export class IAmNotAction extends Action {
     const userId = message.from?.id;
     if (!userId) return;
     const { game } = this.gameRoom;
-    const all = game.getCharactersList(userId);
-    const except = game.getPlayer(userId)?.characters;
-    const buttons = pullAll(all, except).map(character => `🙅 ${character}`);
+    const buttons = game.getAvalibleCharacters(userId).map(character => `🙅 ${character}`);
 
     buttons.push('🏠 Главное меню');
     this.bot.telegram.sendMessage(

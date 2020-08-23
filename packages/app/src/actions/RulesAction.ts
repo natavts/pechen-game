@@ -5,7 +5,7 @@ import join from 'lodash/join';
 import { IncomingMessage } from 'telegraf/typings/telegram-types'; // eslint-disable-line
 
 import Action, { ActionProps } from './Action'; // eslint-disable-line
-import { menuButtons } from '../buttons';
+import { getMenuButtons } from '../buttons';
 
 export class RulesAction extends Action {
   constructor(props: ActionProps) {
@@ -22,6 +22,6 @@ export class RulesAction extends Action {
     const userId = message.from?.id;
     if (!userId) return;
     const rules = this.gameRoom.game.rules.map(item => item.name);
-    this.bot.telegram.sendMessage(userId, join(rules, ' -> '), menuButtons); // refresh
+    this.bot.telegram.sendMessage(userId, join(rules, ' -> '), getMenuButtons(userId, this.gameRoom.game));
   }
 }

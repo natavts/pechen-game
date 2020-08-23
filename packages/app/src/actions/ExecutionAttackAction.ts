@@ -5,8 +5,8 @@ import { IncomingMessage } from 'telegraf/typings/telegram-types'; // eslint-dis
 
 import { TurnType } from '../game';
 import Action, { ActionProps } from './Action'; // eslint-disable-line
-import { menuButtons } from '../buttons';
-import { getStatus, startConflictMode, checkRoundEnd } from '../game/utils';
+import { getMenuButtons } from '../buttons';
+import { startConflictMode, checkRoundEnd } from '../game/utils';
 
 export class ExecutionAttackAction extends Action {
   constructor(props: ActionProps) {
@@ -29,7 +29,7 @@ export class ExecutionAttackAction extends Action {
     console.log('ExecutionAttackAction', opponentId, opponentId !== userId, game.canDoAction(userId, TurnType.attack));
     if (opponentId && opponentId !== userId && game.canDoAction(userId, TurnType.attack)) {
       game.attack({ userId, opponentId });
-      this.bot.telegram.sendMessage(userId, `АТАКУЮ @${opponentName}!!!!`, menuButtons);
+      this.bot.telegram.sendMessage(userId, `АТАКУЮ @${opponentName}!!!!`, getMenuButtons(userId, game));
       if (game.conflictMode) {
         startConflictMode(game, this.bot);
       }

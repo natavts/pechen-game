@@ -5,7 +5,7 @@ import { IncomingMessage } from 'telegraf/typings/telegram-types'; // eslint-dis
 
 import { TurnType } from '../game';
 import Action, { ActionProps } from './Action'; // eslint-disable-line
-import { menuButtons } from '../buttons';
+import { getMenuButtons } from '../buttons';
 import { getStatus, startConflictMode } from '../game/utils';
 
 export class ExecutionIAmNotAction extends Action {
@@ -30,16 +30,20 @@ export class ExecutionIAmNotAction extends Action {
       game.character({ userId, characterName });
       if (currentTurn !== game.turn) {
         game.players.forEach(user => {
-          this.bot.telegram.sendMessage(user.userId, getStatus(game.getStatusData()), menuButtons); // refresh
+          this.bot.telegram.sendMessage(user.userId, getStatus(game), getMenuButtons(user.userId, game)); // refresh
         });
       } else {
-        this.bot.telegram.sendMessage(userId, `📢 Вы сказали всем, что вы не ${characterName}`, menuButtons); // refresh
+        this.bot.telegram.sendMessage(
+          userId,
+          `📢 Вы сказали всем, что вы не ${characterName}`,
+          getMenuButtons(userId, game),
+        ); // refresh
         if (game.conflictMode) {
           startConflictMode(game, this.bot);
         }
       }
     } else {
-      this.bot.telegram.sendMessage(userId, `нельзя`, menuButtons);
+      this.bot.telegram.sendMessage(userId, `нельзя`, getMenuButtons(userId, game));
     }
   }
 }

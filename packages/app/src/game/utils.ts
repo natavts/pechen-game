@@ -2,19 +2,20 @@
 /* eslint-disable import/extensions */
 import join from 'lodash/join';
 import { Telegram } from 'telegraf';
-import { StatusData, Game } from '.';
-import { actionButtons, menuButtons } from '../buttons';
+import { Game } from '.';
+import { actionButtons, getMenuButtons } from '../buttons';
 
-export const getStatus = ({ round, data }: StatusData): string => {
-  return `Раунд: ${round}\n
+export const getStatus = (game: Game): string => {
+  const data = game.getStatusData();
+  return `Раунд: ${game.round}\n
   ${data.map(({ username, points, characters, attackPlayer, defencePlayer, opponentAttacks, opponentDefences }) => {
     return `
     @${username} (Очки: ${points})
     Ходы: ${join(characters, ', ')}
-    Атаковал: ${attackPlayer}
-    Защитился: ${defencePlayer}
-    Кто атаковал: ${join(opponentAttacks, ', ')}
-    Кто защитился: ${join(opponentDefences, ', ')}\n\n\n`;
+    Атаковал: ${attackPlayer && `@${attackPlayer}`}
+    Защитился от: ${defencePlayer && `@${defencePlayer}`}
+    Кто атаковал @${username}: ${join(opponentAttacks, ', ')}
+    Кто защитился от @${username}: ${join(opponentDefences, ', ')}\n\n\n`;
   })}
   `;
 };
@@ -30,14 +31,18 @@ export const startConflictMode = (game: Game, bot: Telegram): void => {
   game.players
     .filter(p => !p.conflictType)
     .forEach(player => {
-      bot.telegram.sendMessage(player.userId, `Конфликтный режим. Ждем, когда игроки сделают ход`, menuButtons);
+      bot.telegram.sendMessage(
+        player.userId,
+        `Конфликтный режим. Ждем, когда игроки сделают ход`,
+        getMenuButtons(player.userId, game),
+      );
     });
 };
 
 export const checkRoundEnd = (game: Game, bot: Telegram) => {
   if (game.isRoundEnd()) {
     game.players.forEach(user => {
-      bot.telegram.sendMessage(user.userId, getStatus(game.getStatusData()), menuButtons);
+      bot.telegram.sendMessage(user.userId, getStatus(game), getMenuButtons(user.userId, game));
     });
   }
   if (game.isGameOver()) {
@@ -48,7 +53,7 @@ export const checkRoundEnd = (game: Game, bot: Telegram) => {
       bot.telegram.sendMessage(
         user.userId,
         game.winners.map(w => `Победил @${w!.name}. Набрал ${w!.points}`).join('\n'),
-        menuButtons,
+        getMenuButtons(user.userId, game),
       );
     });
   }

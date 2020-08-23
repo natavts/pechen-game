@@ -4,7 +4,7 @@
 import { IncomingMessage } from 'telegraf/typings/telegram-types'; // eslint-disable-line
 
 import Action, { ActionProps } from './Action'; // eslint-disable-line
-import { menuButtons } from '../buttons';
+import { getMenuButtons } from '../buttons';
 
 export class JoinAction extends Action {
   constructor(props: ActionProps) {
@@ -45,7 +45,7 @@ export class JoinAction extends Action {
 
     if (this.gameRoom.isFull() && this.gameRoom.checkUserInGame(userId)) {
       this.gameRoom.game.players.forEach(user => {
-        this.send(user.userId, '👾 Игра началась!', menuButtons);
+        this.send(user.userId, '👾 Игра началась!', getMenuButtons(userId, this.gameRoom.game));
       });
     }
   }

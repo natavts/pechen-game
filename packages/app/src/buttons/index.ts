@@ -1,13 +1,25 @@
 import Telegraf from 'telegraf';
 import { Game } from '../game';
 
-export const menuButtons = Telegraf.Extra.markdown().markup(m => {
-  return m.keyboard(['👤 Кто я?', '⚔ Ходить', 'Правила', 'Статус']);
-});
+export const getMenuButtons = (userId: number, game: Game): any => {
+  return Telegraf.Extra.markdown().markup(m => {
+    return m.keyboard(
+      ['👤 Кто я?', game.haveAnyTurns(userId) ? '⚔ Ходить' : null, 'Правила', 'Статус'].filter(b => !!b),
+    );
+  });
+};
 
-export const actionsButtons = Telegraf.Extra.markdown().markup(m => {
-  return m.keyboard(['⚔ Атаковать', '☘ Защищаться', '📢 Я не...', '🏠 Главное меню']);
-});
+export const actionsButtons = (userId: number, game: Game): any =>
+  Telegraf.Extra.markdown().markup(m => {
+    return m.keyboard(
+      [
+        game.canDoAction(userId, 'attack') ? '⚔ Атаковать' : null,
+        game.canDoAction(userId, 'defence') ? '☘ Защищаться' : null,
+        game.getAvalibleCharacters(userId).length ? '📢 Я не...' : null,
+        '🏠 Главное меню',
+      ].filter(b => !!b),
+    );
+  });
 
 export const actionButtons = (game: Game, actionType: 'attack' | 'defence', userId: number): any => {
   const emoji = actionType === 'defence' ? '🛡' : '🗡';

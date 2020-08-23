@@ -18,7 +18,7 @@ export const mockPlayers = [
 ];
 
 export const mockEvents: Turn[] = [
-  // turn 1
+  // round 1
   {
     type: 'character',
     data: {
@@ -41,12 +41,33 @@ export const mockEvents: Turn[] = [
     },
   },
   {
-    type: 'defence',
+    type: 'character',
     data: {
       userId: 80081115,
-      opponentId: 2,
+      characterName: 'Синий',
     },
   },
+  {
+    type: 'character',
+    data: {
+      userId: 2,
+      characterName: 'Стронций',
+    },
+  },
+  {
+    type: 'character',
+    data: {
+      userId: 3,
+      characterName: 'Печенька',
+    },
+  },
+  // {
+  //   type: 'defence',
+  //   data: {
+  //     userId: 80081115,
+  //     opponentId: 2,
+  //   },
+  // },
   {
     type: 'attack',
     data: {
@@ -56,99 +77,6 @@ export const mockEvents: Turn[] = [
   },
   {
     type: 'attack',
-    data: {
-      userId: 3,
-      opponentId: 80081115,
-    },
-  },
-  {
-    type: 'defence',
-    data: {
-      userId: 2,
-      opponentId: 3,
-    },
-  },
-  {
-    type: 'defence',
-    data: {
-      userId: 3,
-      opponentId: 2,
-    },
-  },
-  {
-    type: 'attack',
-    data: {
-      userId: 80081115,
-      opponentId: 2,
-    },
-  },
-  // round 2
-  {
-    type: 'attack',
-    data: {
-      userId: 80081115,
-      opponentId: 3,
-    },
-  },
-  {
-    type: 'attack',
-    data: {
-      userId: 2,
-      opponentId: 3,
-    },
-  },
-  {
-    type: 'defence',
-    data: {
-      userId: 3,
-      opponentId: 2,
-    },
-  },
-  {
-    type: 'defence',
-    data: {
-      userId: 80081115,
-      opponentId: 2,
-    },
-  },
-  {
-    type: 'defence',
-    data: {
-      userId: 2,
-      opponentId: 80081115,
-    },
-  },
-  {
-    type: 'attack',
-    data: {
-      userId: 3,
-      opponentId: 80081115,
-    },
-  },
-  // round 3
-  {
-    type: 'attack',
-    data: {
-      userId: 3,
-      opponentId: 2,
-    },
-  },
-  {
-    type: 'attack',
-    data: {
-      userId: 80081115,
-      opponentId: 2,
-    },
-  },
-  {
-    type: 'defence',
-    data: {
-      userId: 2,
-      opponentId: 3,
-    },
-  },
-  {
-    type: 'defence',
     data: {
       userId: 3,
       opponentId: 80081115,
@@ -157,15 +85,101 @@ export const mockEvents: Turn[] = [
   // {
   //   type: 'defence',
   //   data: {
+  //     userId: 2,
+  //     opponentId: 3,
+  //   },
+  // },
+  // {
+  //   type: 'defence',
+  //   data: {
+  //     userId: 3,
+  //     opponentId: 2,
+  //   },
+  // },
+  // {
+  //   type: 'attack',
+  //   data: {
+  //     userId: 80081115,
+  //     opponentId: 2,
+  //   },
+  // },
+  // // round 2
+  // {
+  //   type: 'attack',
+  //   data: {
   //     userId: 80081115,
   //     opponentId: 3,
   //   },
   // },
-  {
-    type: 'attack',
-    data: {
-      userId: 2,
-      opponentId: 3,
-    },
-  },
+  // {
+  //   type: 'attack',
+  //   data: {
+  //     userId: 2,
+  //     opponentId: 3,
+  //   },
+  // },
+  // {
+  //   type: 'defence',
+  //   data: {
+  //     userId: 3,
+  //     opponentId: 2,
+  //   },
+  // },
+  // {
+  //   type: 'defence',
+  //   data: {
+  //     userId: 80081115,
+  //     opponentId: 2,
+  //   },
+  // },
+  // {
+  //   type: 'defence',
+  //   data: {
+  //     userId: 2,
+  //     opponentId: 80081115,
+  //   },
+  // },
+  // {
+  //   type: 'attack',
+  //   data: {
+  //     userId: 3,
+  //     opponentId: 80081115,
+  //   },
+  // },
+  // // round 3
+  // {
+  //   type: 'attack',
+  //   data: {
+  //     userId: 3,
+  //     opponentId: 2,
+  //   },
+  // },
+  // {
+  //   type: 'attack',
+  //   data: {
+  //     userId: 80081115,
+  //     opponentId: 2,
+  //   },
+  // },
+  // {
+  //   type: 'defence',
+  //   data: {
+  //     userId: 2,
+  //     opponentId: 3,
+  //   },
+  // },
+  // {
+  //   type: 'defence',
+  //   data: {
+  //     userId: 3,
+  //     opponentId: 80081115,
+  //   },
+  // },
+  // {
+  //   type: 'attack',
+  //   data: {
+  //     userId: 2,
+  //     opponentId: 3,
+  //   },
+  // },
 ];

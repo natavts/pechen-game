@@ -5,7 +5,7 @@ import { IncomingMessage } from 'telegraf/typings/telegram-types'; // eslint-dis
 
 import Action, { ActionProps } from './Action'; // eslint-disable-line
 import { getStatus } from '../game/utils';
-import { menuButtons } from '../buttons';
+import { getMenuButtons } from '../buttons';
 
 export class StatusAction extends Action {
   constructor(props: ActionProps) {
@@ -21,6 +21,6 @@ export class StatusAction extends Action {
   public exec(message: IncomingMessage): void {
     const userId = message.from?.id;
     if (!userId) return;
-    this.bot.telegram.sendMessage(userId, getStatus(this.gameRoom.game.getStatusData()), menuButtons); // refresh
+    this.bot.telegram.sendMessage(userId, getStatus(this.gameRoom.game), getMenuButtons(userId, this.gameRoom.game)); // refresh
   }
 }

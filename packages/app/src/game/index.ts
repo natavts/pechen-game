@@ -6,6 +6,7 @@ import find from 'lodash/find';
 import every from 'lodash/every';
 import maxBy from 'lodash/maxBy';
 import some from 'lodash/some';
+import pullAll from 'lodash/pullAll';
 // import join from 'lodash/join';
 import { AttackAction } from 'actions';
 import Action from 'actions/Action';
@@ -35,11 +36,6 @@ export interface ActionData {
 export interface CharacterData {
   userId: number;
   characterName: string;
-}
-
-export interface StatusData {
-  round: number;
-  data: UserStatus[];
 }
 
 export interface UserStatus {
@@ -205,11 +201,14 @@ export class Game {
       console.log('canDoAction -> this.conflictMode', this.conflictMode);
       return !!player.conflictType && action === player.conflictType;
     }
+    if (this.turns.filter(t => t.data.userId === userId).length) {
+      return false;
+    }
     if (action === TurnType.character && characterName) {
       return !player.characters.includes(characterName);
     }
     // console.log('!!!canDoAction!!', !player[action], player);
-    return player[action] === null;
+    return this.haveTurns(userId, action);
   }
 
   private getConflictTurnType(type: TurnType): TurnType {
@@ -279,6 +278,12 @@ export class Game {
     });
   }
 
+  public getAvalibleCharacters(userId: number): string[] {
+    const all = this.getCharactersList(userId);
+    const except = this.getPlayer(userId)?.characters;
+    return pullAll(all, except);
+  }
+
   public getActionForUser(userId: number, type: TurnType): any[] {
     const player = this.getPlayer(userId);
     if (type === TurnType.character) {
@@ -311,6 +316,18 @@ export class Game {
 
   public haveTurns(userId: number, type: TurnType): boolean {
     return !!this.getActionForUser(userId, type).length;
+  }
+
+  public haveAnyTurns(userId: number): boolean {
+    console.log(
+      'haveAnyTurnshaveAnyTurnshaveAnyTurnshaveAnyTurns',
+      persons.filter(c => this.canDoAction(userId, TurnType.character, c)),
+    );
+    return (
+      this.canDoAction(userId, TurnType.attack) ||
+      this.canDoAction(userId, TurnType.defence) ||
+      !!persons.filter(c => this.canDoAction(userId, TurnType.character, c)).length
+    );
   }
 
   private isAllTurns(): boolean {
@@ -352,11 +369,16 @@ export class Game {
     return opponentActions.map(item => `@${this.getPlayer(item.data.userId)?.name}` || '').filter(i => !!i);
   }
 
-  public getStatusData(): StatusData {
+  public getStatusData(): UserStatus[] {
     const data = this.players.map(player => {
-      // трэшак
-      const attackPlayer = (player.attack && `@${this.getPlayer(player.attack)?.name}`) || '';
-      const defencePlayer = (player.defence && `@${this.getPlayer(player.defence)?.name}`) || '';
+      const attackEvent = find(
+        this.events.filter(e => !e.isConflicted),
+        { type: TurnType.attack, data: { userId: player.userId } },
+      );
+      const defenceEvent = find(
+        this.events.filter(e => !e.isConflicted),
+        { type: TurnType.defence, data: { userId: player.userId } },
+      );
 
       console.log(player.characters);
 
@@ -364,16 +386,13 @@ export class Game {
         username: player.name,
         points: player.points,
         characters: player.characters,
-        attackPlayer,
-        defencePlayer,
+        attackPlayer: (attackEvent && this.getPlayer(attackEvent.data.opponentId)?.name) || '',
+        defencePlayer: (defenceEvent && this.getPlayer(defenceEvent.data.opponentId)?.name) || '',
         opponentAttacks: this.getOpponentActionList(player.userId, TurnType.attack, this.events),
         opponentDefences: this.getOpponentActionList(player.userId, TurnType.defence, this.events),
       };
     });
-    return {
-      round: this.round,
-      data,
-    };
+    return data;
   }
 }
 

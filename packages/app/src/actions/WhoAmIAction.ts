@@ -5,7 +5,7 @@ import { IncomingMessage } from 'telegraf/typings/telegram-types'; // eslint-dis
 // import find from 'lodash/find';
 
 import Action, { ActionProps } from './Action'; // eslint-disable-line
-import { menuButtons } from '../buttons';
+import { getMenuButtons } from '../buttons';
 
 export class WhoAmIAction extends Action {
   constructor(props: ActionProps) {
@@ -27,7 +27,7 @@ export class WhoAmIAction extends Action {
       `⚪️ Вы: ${character?.name}\n
       🔴 Должны атаковать: ${character?.attack}\n
       🔵 Должны защититься от: ${character?.defence}`,
-      menuButtons,
+      getMenuButtons(userId, this.gameRoom.game),
     ); // refresh
   }
 }

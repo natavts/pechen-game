@@ -4,7 +4,7 @@
 import { IncomingMessage } from 'telegraf/typings/telegram-types'; // eslint-disable-line
 
 import Action, { ActionProps } from './Action'; // eslint-disable-line
-import { menuButtons } from '../buttons';
+import { getMenuButtons } from '../buttons';
 
 export class MenuAction extends Action {
   constructor(props: ActionProps) {
@@ -20,6 +20,6 @@ export class MenuAction extends Action {
   public exec(message: IncomingMessage): void {
     const userId = message.from?.id;
     if (!userId) return;
-    this.bot.telegram.sendMessage(userId, 'Выберите действие', menuButtons); // refresh
+    this.bot.telegram.sendMessage(userId, 'Выберите действие', getMenuButtons(userId, this.gameRoom.game));
   }
 }
